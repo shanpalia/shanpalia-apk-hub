@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>APK Admin Panel</title>
+
+<style>
+body{
+font-family:Arial;
+max-width:700px;
+margin:auto;
+padding:20px;
+}
+
+input,textarea,select{
+width:100%;
+padding:12px;
+margin:8px 0;
+}
+
+button{
+background:#2563eb;
+color:white;
+border:none;
+padding:12px;
+width:100%;
+cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<h1>ShanPalia APK Hub Admin</h1>
+
+<input id="name" placeholder="App Name">
+
+<input id="icon" placeholder="Icon URL">
+
+<input id="apk" placeholder="APK Link">
+
+<textarea id="description"
+placeholder="Description"></textarea>
+
+<select id="category">
+<option>Social</option>
+<option>AI</option>
+<option>Tools</option>
+<option>Games</option>
+<option>Utilities</option>
+</select>
+
+<button onclick="addApp()">
+Add App
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL =
+"https://ralinnuegsbuvlhwpzln.supabase.co";
+
+const SUPABASE_KEY =
+"PASTE_YOUR_sb_publishable_KEY_HERE";
+
+const supabaseClient =
+supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+async function addApp(){
+
+const { error } =
+await supabaseClient
+.from("apps")
+.insert([{
+
+name:
+document.getElementById("name").value,
+
+icon:
+document.getElementById("icon").value,
+
+apk:
+document.getElementById("apk").value,
+
+description:
+document.getElementById("description").value,
+
+category:
+document.getElementById("category").value
+
+}]);
+
+if(error){
+alert(error.message);
+}else{
+alert("App Added Successfully");
+location.reload();
+}
+
+}
+</script>
+
+</body>
+</html>
