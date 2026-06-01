@@ -254,7 +254,7 @@ Download Android Apps, AI Tools, Social Apps & Utilities
 
 <div class="search-box">
 <input type="text" id="searchInput" placeholder="Search APKs..." onkeyup="searchApps()">
-<button>Search</button>
+<button onclick="searchApps()">Search</button>
 </div>
 
 </section>
@@ -268,7 +268,7 @@ Download Android Apps, AI Tools, Social Apps & Utilities
 
 <div class="category"><a href="ai.html">🤖 AI Apps</a></div>
 
-<a href="tools.html">🛠 Tools</a>
+<div class="category"><a href="tools.html">🛠 Tools</a></div>
 
 <div class="category"><a href="comingsoon.html">🎮 Games</a></div>
 
@@ -375,7 +375,7 @@ function searchApps() {
 
   cards.forEach(function(card){
     if(card.innerText.toLowerCase().includes(input)){
-      card.style.display = "block";
+      card.style.display = "";
     } else {
       card.style.display = "none";
     }
