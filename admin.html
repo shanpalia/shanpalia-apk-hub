@@ -54,50 +54,40 @@ Add App
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
-const SUPABASE_URL =
-"https://ralinnuegsbuvlhwpzln.supabase.co";
+const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
 
-const SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
 
-const supabaseClient =
-supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 async function addApp(){
 
-const { error } =
-await supabaseClient
-.from("apps")
-.insert([{
+  const { error } = await supabaseClient
+  .from("apps")
+  .insert([{
+    name: document.getElementById("name").value,
+    icon: document.getElementById("icon").value,
+    apk: document.getElementById("apk").value,
+    description: document.getElementById("description").value,
+    category: document.getElementById("category").value
+  }]);
 
-name:
-document.getElementById("name").value,
-
-icon:
-document.getElementById("icon").value,
-
-apk:
-document.getElementById("apk").value,
-
-description:
-document.getElementById("description").value,
-
-category:
-document.getElementById("category").value
-
-}]);
-
-if(error){
-alert(error.message);
-}else{
-alert("App Added Successfully");
-location.reload();
+  if(error){
+    alert(error.message);
+  }else{
+    alert("App Added Successfully");
+  }
 }
 
-}
 </script>
+
 
 </body>
 </html>
