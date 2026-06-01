@@ -260,23 +260,17 @@ Download Android Apps, AI Tools, Social Apps & Utilities
 </section>
 
 
-
 <section class="section" id="categories">
 <div class="categories">
 
 <div class="category"><a href="social.html">📱 Social Apps</a></div>
-
 <div class="category"><a href="ai.html">🤖 AI Apps</a></div>
-
 <div class="category"><a href="comingsoon.html">🛠 Tools</a></div>
-
 <div class="category"><a href="comingsoon.html">🎮 Games</a></div>
-
 <div class="category"><a href="comingsoon.html">⚡ Utilities</a></div>
 
 </div>
 </section>
-
 <section class="section" id="latestapps">
 
 <div class="ad-box">
@@ -285,68 +279,9 @@ Google AdSense Banner Area
 
 <h2 class="title">Latest Uploaded Apps</h2>
 
-<div class="apps">
-
-<div class="app-card">
-
-<img src="https://cdn-icons-png.flaticon.com/512/732/732200.png">
-
-<h3>Social Finder</h3>
-
-<p>
-Find social profile links instantly across multiple platforms.
-</p>
-
-<a class="btn"
-href="https://files.appsgeyser.com/Social_Finder_19865381.apk?dl=true">
-Download APK
-</a>
-
-</div>
-<div class="app-card">
-
-<img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png">
-
-<h3>AI Chat Assistant</h3>
-
-<p>
-Smart AI chatbot for chatting and writing.
-</p>
-
-<a class="btn"
-href="https://your-apk-link.apk">
-Download APK
-</a>
-
-</div>
-
-<div class="app-card">
-<img src="https://cdn-icons-png.flaticon.com/512/5968/5968705.png">
-<h3>Coming Soon</h3>
-<p>Upload your next app here.</p>
-
-</div>
-
-<div class="app-card">
-
-<img src="https://cdn-icons-png.flaticon.com/512/732/732229.png">
-
-<h3>Coming Soon</h3>
-
-<p>
-Upload your next app here.
-</p>
-
-<a class="btn" href="#">
-Download
-</a>
-
-</div>
-
-</div>
+<div id="apps-container" class="apps"></div>
 
 </section>
-
 <section class="section" id="feedback">
 
 <h2 class="title">Send Feedback</h2>
@@ -383,6 +318,56 @@ Download
 </p>
 
 </footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL =
+"https://ralinnuegsbuvlhwpzln.supabase.co";
+
+const SUPABASE_KEY =
+const SUPABASE_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
+
+const supabaseClient =
+supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+async function loadApps(){
+
+const { data, error } =
+await supabaseClient
+.from("apps")
+.select("*")
+.order("id",{ascending:false});
+
+if(error){
+console.log(error);
+return;
+}
+
+const container =
+document.getElementById("apps-container");
+
+container.innerHTML = "";
+
+data.forEach(app=>{
+
+container.innerHTML += `
+<div class="app-card">
+<img src="${app.icon}">
+<h3>${app.name}</h3>
+<p>${app.description}</p>
+<a class="btn" href="${app.apk}">
+Download APK
+</a>
+</div>
+`;
+
+});
+
+}
+
+loadApps();
+</script>
+
 <script>
 function searchApps() {
   let input = document.getElementById("searchInput").value.toLowerCase();
