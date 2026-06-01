@@ -253,7 +253,7 @@ Download Android Apps, AI Tools, Social Apps & Utilities
 </p>
 
 <div class="search-box">
-<input type="text" placeholder="Search APKs...">
+<input type="text" id="searchInput" placeholder="Search APKs..." onkeyup="searchApps()">
 <button>Search</button>
 </div>
 
@@ -368,6 +368,19 @@ Download
 </p>
 
 </footer>
+<script>
+function searchApps() {
+  let input = document.getElementById("searchInput").value.toLowerCase();
+  let cards = document.querySelectorAll(".app-card");
 
+  cards.forEach(function(card){
+    if(card.innerText.toLowerCase().includes(input)){
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+</script>
 </body>
 </html>
