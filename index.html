@@ -103,14 +103,16 @@ color:#2563eb;
 }
 
 .categories{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+display:flex;
+justify-content:center;
 gap:20px;
+flex-wrap:wrap;
+margin:30px 0;
 }
 
 .category{
 background:white;
-padding:25px;
+padding:20px;
 border-radius:20px;
 text-align:center;
 border:1px solid #e5e7eb;
@@ -118,12 +120,18 @@ box-shadow:0 4px 15px rgba(0,0,0,.05);
 font-size:18px;
 font-weight:bold;
 transition:.3s;
+min-width:180px;
 }
 
 .category:hover{
 transform:translateY(-5px);
+box-shadow:0 8px 25px rgba(37,99,235,.15);
 }
-
+.category a{
+text-decoration:none;
+color:#2563eb;
+display:block;
+}
 .apps{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
@@ -251,7 +259,7 @@ Download Android Apps, AI Tools, Social Apps & Utilities
 
 </section>
 
-<section class="section">
+
 
 <section class="section" id="categories">
 <div class="categories">
