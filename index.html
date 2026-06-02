@@ -328,7 +328,7 @@ const SUPABASE_KEY =
 const supabaseClient =
 supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 async function loadApps(){
-
+loadApps();
 const { data, error } =
 await supabaseClient
 .from("apps")
