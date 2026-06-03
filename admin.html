@@ -17,78 +17,22 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
 
-        h1 {
-            color: #2563eb;
-            text-align: center;
-            margin-bottom: 25px;
-        }
+        h1 { color: #2563eb; text-align: center; margin-bottom: 25px; }
+        label { font-weight: bold; font-size: 14px; color: #475569; display: block; margin-top: 10px; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0 18px 0; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        button { background: #2563eb; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #1d4ed8; }
+        .status-msg { text-align: center; font-weight: bold; margin-top: 15px; }
 
-        label {
-            font-weight: bold;
-            font-size: 14px;
-            color: #475569;
-            display: block;
-            margin-top: 10px;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0 18px 0;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 15px;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-        }
-
-        button {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background: #1d4ed8;
-        }
-
-        .status-msg {
-            text-align: center;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-
-        /* Login Box Styling */
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        /* Shuruat me admin form hide rahega */
-        #adminForm {
-            display: none;
-        }
+        /* Login Screen Box */
+        .login-container { max-width: 400px; margin: 100px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        #adminForm { display: none; }
     </style>
 </head>
 <body>
 
+<!-- 1. LOGIN SCREEN -->
 <div id="loginBox" class="login-container">
     <h2>🔒 Admin Login</h2>
     <p style="color: #64748b; font-size: 14px; margin-bottom: 15px;">Enter password to access Admin Panel</p>
@@ -97,20 +41,21 @@
     <div id="loginError" style="color: red; margin-top: 10px; font-weight: bold;"></div>
 </div>
 
+<!-- 2. MAIN ADMIN FORM -->
 <div id="adminForm">
     <h1>ShanPalia APK Hub Admin</h1>
 
     <label for="name">App Name</label>
-    <input id="name" placeholder="E.g., WhatsApp Plus">
+    <input id="name" placeholder="E.g., Social Finder">
 
     <label for="icon">Icon URL</label>
-    <input id="icon" placeholder="E.g., https://site.com/logo.png">
+    <input id="icon" placeholder="E.g., https://cdn-icons-png.flaticon.com/512/725/725281.png">
 
     <label for="apk">APK Download Link</label>
-    <input id="apk" placeholder="E.g., Google Drive / Mediafire Link">
+    <input id="apk" placeholder="E.g., https://files.appsgeyser.com/Your_App_Link">
 
     <label for="description">Description</label>
-    <textarea id="description" rows="4" placeholder="Write app details here..."></textarea>
+    <textarea id="description" rows="5" placeholder="Write app details here..."></textarea>
 
     <label for="category">Category</label>
     <select id="category">
@@ -125,18 +70,16 @@
     <div id="status" class="status-msg"></div>
 </div>
 
+<!-- Supabase CDN Link -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// 🔑 APNA SECRET PASSWORD YAHAN SET KAREIN
 const SECRET_PASSWORD = "ShanPalia@2026"; 
-
 const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
 
 let supabaseClient = null;
 
-// Password Check Karne ka system
 function checkPassword() {
     const enteredPass = document.getElementById("adminPassword").value;
     const loginError = document.getElementById("loginError");
@@ -150,12 +93,8 @@ function checkPassword() {
     }
 }
 
-// Database me App upload karne ka function
 async function addApp(){
-    if(!supabaseClient) {
-        alert("Unauthorized access!");
-        return;
-    }
+    if(!supabaseClient) return;
 
     const nameInput = document.getElementById("name");
     const iconInput = document.getElementById("icon");
@@ -165,7 +104,6 @@ async function addApp(){
     const statusDiv = document.getElementById("status");
     const btn = document.getElementById("submitBtn");
 
-    // Form Validation
     if(!nameInput.value || !iconInput.value || !apkInput.value || !descInput.value){
         statusDiv.style.color = "red";
         statusDiv.innerText = "⚠️ Please fill all fields!";
@@ -177,7 +115,6 @@ async function addApp(){
     btn.disabled = true;
     btn.innerText = "Please wait...";
 
-    // Supabase Insert Command
     const { error } = await supabaseClient
         .from("apps")
         .insert([{
@@ -199,7 +136,6 @@ async function addApp(){
         statusDiv.style.color = "green";
         statusDiv.innerText = "🎉 App Added Successfully!";
         
-        // Form clear karna
         nameInput.value = "";
         iconInput.value = "";
         apkInput.value = "";
