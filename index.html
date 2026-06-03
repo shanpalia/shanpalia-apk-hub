@@ -11,6 +11,8 @@ body{ background:#ffffff; color:#111827; }
 header{ background:#ffffff; padding:18px 5%; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 12px rgba(0,0,0,.06); position:sticky; top:0; z-index:999; }
 .logo{ font-size:30px; font-weight:700; color:#2563eb; text-decoration:none; }
 nav a{ text-decoration:none; margin-left:20px; color:#334155; font-weight:600; }
+nav a.admin-btn { color: #dc2626; border: 1px solid #fee2e2; padding: 6px 12px; border-radius: 8px; background: #fef2f2; transition: 0.2s; }
+nav a.admin-btn:hover { background: #fee2e2; }
 .hero{ background:#ffffff; padding:100px 20px; text-align:center; }
 .hero h1{ font-size:70px; font-weight:800; color:#2563eb; margin-bottom:20px; }
 .hero p{ font-size:22px; color:#64748b; margin-bottom:35px; }
@@ -38,7 +40,7 @@ nav a{ text-decoration:none; margin-left:20px; color:#334155; font-weight:600; }
 .feedback button{ margin-top:15px; background:#2563eb; color:white; border:none; padding:14px 25px; border-radius:10px; cursor:pointer; }
 footer{ background:#f8fafc; padding:40px; text-align:center; border-top:1px solid #e5e7eb; }
 footer a{ margin:0 10px; text-decoration:none; color:#2563eb; }
-@media (max-width: 768px) { .hero h1 { font-size: 45px; } header { flex-direction: column; gap: 15px; text-align: center; } nav a { margin: 0 8px; } }
+@media (max-width: 768px) { .hero h1 { font-size: 45px; } header { flex-direction: column; gap: 15px; text-align: center; } nav a { margin: 0 8px; } nav a.admin-btn { display: inline-block; margin-top: 10px; } }
 </style>
 </head>
 <body>
@@ -50,6 +52,7 @@ footer a{ margin:0 10px; text-decoration:none; color:#2563eb; }
 <a href="#categories">Categories</a>
 <a href="#latestapps">Latest Apps</a>
 <a href="#feedback">Feedback</a>
+<a href="admin.html" class="admin-btn">👑 Admin Panel</a>
 </nav>
 </header>
 
@@ -138,7 +141,6 @@ async function loadApps(){
             }
         });
 
-        // Unique filtered apps loop structure render
         uniqueApps.forEach(app => {
             let currentIcon = app.icon;
             if(!currentIcon || currentIcon.includes("link-to-your") || currentIcon === "") {
