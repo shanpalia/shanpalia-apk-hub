@@ -42,9 +42,17 @@ nav a.admin-btn:hover { background: #b91c1c !important; transform: translateY(-1
 .meta-info .dl { color: #10b981; }
 .view-btn { display:inline-block; background:#2563eb; color:white; padding:10px 20px; border-radius:10px; margin-top:15px; font-weight:bold; font-size: 14px; }
 .ad-box{ background:#eff6ff; padding:40px; text-align:center; border:2px dashed #2563eb; border-radius:20px; margin-bottom:50px; font-size:22px; font-weight:bold; color:#2563eb; }
+
+/* FEEDBACK & SHARE STYLING */
 .feedback{ max-width:700px; margin:auto; background:white; padding:30px; border-radius:20px; border:1px solid #e5e7eb; box-shadow:0 4px 15px rgba(0,0,0,.05); }
-.feedback input, .feedback textarea{ width:100%; padding:14px; margin-top:12px; border:1px solid #cbd5e1; border-radius:10px; }
-.feedback button{ margin-top:15px; background:#2563eb; color:white; border:none; padding:14px 25px; border-radius:10px; cursor:pointer; }
+.feedback input, .feedback textarea{ width:100%; padding:14px; margin-top:12px; border:1px solid #cbd5e1; border-radius:10px; outline:none; font-size:15px; }
+.feedback input:focus, .feedback textarea:focus { border-color:#2563eb; }
+.feedback button{ width:100%; margin-top:15px; background:#2563eb; color:white; border:none; padding:14px 25px; border-radius:10px; cursor:pointer; font-weight:bold; font-size:16px; transition:0.2s; }
+.feedback button:hover{ background:#1d4ed8; }
+
+.share-btn { text-decoration: none; padding: 12px 25px; border-radius: 30px; font-weight: bold; font-size: 14px; color: white; transition: 0.2s; display: inline-flex; align-items: center; }
+.share-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
 footer{ background:#f8fafc; padding:40px; text-align:center; border-top:1px solid #e5e7eb; }
 footer a{ margin:0 10px; text-decoration:none; color:#2563eb; }
 
@@ -66,7 +74,7 @@ footer a{ margin:0 10px; text-decoration:none; color:#2563eb; }
 <a href="#categories">Categories</a>
 <a href="#latestapps">Latest Apps</a>
 <a href="#feedback">Feedback</a>
-<!-- 🔥 LIVE ADMIN PANEL LINK -->
+<!-- 🔥 LIVE ADMIN PANEL BUTTON -->
 <a href="admin.html" class="admin-btn">👑 Admin Panel</a>
 </nav>
 </header>
@@ -99,14 +107,34 @@ footer a{ margin:0 10px; text-decoration:none; color:#2563eb; }
 </div>
 </section>
 
+<!-- 📩 REAL TIME MAIL FEEDBACK SECTION -->
 <section class="section" id="feedback">
 <h2 class="title">Send Feedback</h2>
-<div class="feedback">
-<input type="text" placeholder="Your Name">
-<input type="email" placeholder="Email Address">
-<textarea rows="5" placeholder="Write your feedback"></textarea>
-<button>Send Feedback</button>
-</div>
+<!-- ⚠️ YAHA "YOUR_FORM_ID_HERE" KI JAGAH APNA FORMSPREE ID ZARUR DAAL DENA -->
+<form class="feedback" action="https://formspree.io/f/YOUR_FORM_ID_HERE" method="POST">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="email" name="email" placeholder="Email Address" required>
+    <textarea name="message" rows="5" placeholder="Write your feedback" required></textarea>
+    <button type="submit">Send Feedback</button>
+</form>
+</section>
+
+<!-- 📢 REAL SOCIAL MEDIA SHARE BUTTONS -->
+<section class="section" style="text-align: center; background: #f8fafc; border-top: 1px solid #e5e7eb;">
+    <h2 class="title" style="font-size: 28px; margin-bottom: 20px;">Share ShanPalia APK Hub 🚀</h2>
+    <p style="color: #64748b; margin-bottom: 20px; font-weight: bold;">Apne doston ke sath website share karein:</p>
+    
+    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <!-- Facebook Share Link -->
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://shanpalia786.github.io" target="_blank" class="share-btn" style="background: #1877f2;">
+           🔵 Facebook Par Share Karein
+        </a>
+        
+        <!-- WhatsApp Share Link -->
+        <a href="https://api.whatsapp.com/send?text=Hey! Check out ShanPalia APK Hub to download latest Android Apps and AI Tools for free: https://shanpalia786.github.io" target="_blank" class="share-btn" style="background: #25d366;">
+           🟢 WhatsApp Par Share Karein
+        </a>
+    </div>
 </section>
 
 <footer>
