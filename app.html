@@ -16,13 +16,13 @@ header{ background:#ffffff; padding:18px 5%; display:flex; justify-content:space
 .stats-grid { display: flex; gap: 20px; margin-top: 10px; font-size: 14px; color: #64748b; }
 .stat-box { background: #f1f5f9; padding: 6px 12px; border-radius: 8px; font-weight: bold; color: #2563eb; }
 .download-section { margin: 30px 0; padding: 20px; background: #eff6ff; border-radius: 15px; text-align: center; }
-.btn-download { display: inline-block; background: #2563eb; color: white; text-decoration: none; padding: 16px 40px; font-size: 18px; border-radius: 12px; font-weight: bold; box-shadow: 0 4px 15px rgba(37,99,235,0.3); transition: 0.2s; }
+.btn-download { display: inline-block; background: #2563eb; color: white; text-decoration: none; padding: 16px 40px; font-size: 18px; border-radius: 12px; font-weight: bold; box-shadow: 0 4px 15px rgba(37,99,235,0.3); transition: 0.2s; cursor: pointer;}
 .btn-download:hover { background: #1d4ed8; transform: translateY(-2px); }
 .description-section { margin-top: 30px; line-height: 1.6; color: #334155; }
 .description-section h2 { margin-bottom: 15px; color: #1e293b; }
 .comment-section { margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 30px; }
 .comment-section h2 { margin-bottom: 20px; }
-.comment-form input, .comment-form textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 8px; }
+.comment-form input, .comment-form textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; }
 .comment-form button { background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 .comments-list { margin-top: 20px; }
 .comment-card { background: #f8fafc; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #e5e7eb; }
@@ -46,9 +46,10 @@ const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// URL se App ID nikalna
 const urlParams = new URLSearchParams(window.location.search);
 const appId = urlParams.get('id');
+
+let currentAppDownloads = 0;
 
 async function loadAppDetails() {
     if(!appId) {
@@ -68,7 +69,7 @@ async function loadAppDetails() {
         let currentIcon = app.icon || "https://cdn-icons-png.flaticon.com/512/5124/5124017.png";
         if(currentIcon.includes("link-to-your")) currentIcon = "https://cdn-icons-png.flaticon.com/512/5124/5124017.png";
 
-        let downloadCount = app.downloads || 0;
+        currentAppDownloads = app.downloads || 0;
         let ratingValue = app.rating || "4.5";
 
         const container = document.getElementById("app-details-container");
@@ -78,7 +79,7 @@ async function loadAppDetails() {
                 <div class="app-info">
                     <h1>${app.name}</h1>
                     <div class="stats-grid">
-                        <span class="stat-box">📥 ${downloadCount} Downloads</span>
+                        <span class="stat-box" id="download-counter">📥 ${currentAppDownloads} Downloads</span>
                         <span class="stat-box">⭐ ${ratingValue} Rating</span>
                     </div>
                 </div>
@@ -108,43 +109,72 @@ async function loadAppDetails() {
 
     } catch (error) {
         console.error(error);
-        container.innerHTML = "<p style='color:red; text-align:center;'>Failed to load app data.</p>";
+        document.getElementById("app-details-container").innerHTML = "<p style='color:red; text-align:center;'>Failed to load app data.</p>";
     }
 }
 
-// Download count badhane ka function
+// Fixed Real-time Download counter increment handler
 async function registerDownload(id) {
+    // Screen par instant +1 dikhane ke liye
+    currentAppDownloads += 1;
+    const counterEl = document.getElementById("download-counter");
+    if(counterEl) {
+        counterEl.innerText = `📥 ${currentAppDownloads} Downloads`;
+    }
+
     try {
-        // Database count increment shortcut (RPC ya simple fetch se real-time save update)
-        let { data } = await supabaseClient.rpc('increment_downloads', { row_id: id });
-        // Local screen par instant refresh backup ke liye page automatic update ho jayega
-    } catch(e) {}
+        // Supabase database column update query
+        await supabaseClient
+            .from('apps')
+            .update({ downloads: currentAppDownloads })
+            .eq('id', id);
+    } catch(e) {
+        console.error("Error updating download count:", e);
+    }
 }
 
-// Comments implementation system
 function postComment() {
     let name = document.getElementById("comName").value.trim() || "Anonymous";
     let text = document.getElementById("comText").value.trim();
     if(!text) return;
 
     let storageKey = "comments_app_" + appId;
-    let currentComments = JSON.parse(localStorage.getItem(storageKey)) || [];
+    let currentComments = JSON.parse(localStorage.getItem(storageKey)) || null;
+    
+    // Agar local storage khali hai toh default comments ko merge karke save karenge
+    if (!currentComments) {
+        currentComments = [
+            {name: "Rahul Kumar", text: "Very useful app, downloaded successfully!"},
+            {name: "ShanPalia User", text: "Nice UI, fast downloading link."}
+        ];
+    }
+    
     currentComments.push({ name: name, text: text });
     localStorage.setItem(storageKey, JSON.stringify(currentComments));
     
     document.getElementById("comText").value = "";
+    document.getElementById("comName").value = "";
     renderComments();
 }
 
 function renderComments() {
     let storageKey = "comments_app_" + appId;
-    let currentComments = JSON.parse(localStorage.getItem(storageKey)) || [
-        {name: "Rahul Kumar", text: "Very useful app, downloaded successfully!"},
-        {name: "ShanPalia User", text: "Nice UI, fast downloading link."}
-    ];
+    let currentComments = JSON.parse(localStorage.getItem(storageKey));
+    
+    if (!currentComments) {
+        currentComments = [
+            {name: "Rahul Kumar", text: "Very useful app, downloaded successfully!"},
+            {name: "ShanPalia User", text: "Nice UI, fast downloading link."}
+        ];
+    }
+    
     let box = document.getElementById("comments-list-box");
     box.innerHTML = "";
-    currentComments.reverse().forEach(c => {
+    
+    // Copy banakar reverse karenge taaki naya comment sabse upar dikhe
+    let displayList = [...currentComments].reverse();
+    
+    displayList.forEach(c => {
         box.innerHTML += `
             <div class="comment-card">
                 <h4>👤 ${c.name}</h4>
