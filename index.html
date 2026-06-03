@@ -305,7 +305,6 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // Supabase se data fetch karne ka function
 async function loadApps(){
     try {
-        // 'apps' table se saari rows lana aur unhe order karna taaki naye apps sabse pehle dikhein
         let { data: apps, error } = await supabaseClient
             .from('apps')
             .select('*')
@@ -317,18 +316,27 @@ async function loadApps(){
         container.innerHTML = ""; // Loader text ko remove karne ke liye
 
         if(!apps || apps.length === 0) {
-            container.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>No apps uploaded yet.</p>";
+            container.innerHTML = "<p style='grid-column:1/-1; text-align:center; color:#64748b;'>No apps uploaded yet.</p>";
             return;
         }
 
-        // Loops chala kar cards display karna
+        // Loops chala kar cards display karna safely
         apps.forEach(app => {
+            // Check image: Agar test image link toota hua hai toh safe placeholder icon lagayein
+            let currentIcon = app.icon;
+            if(!currentIcon || currentIcon.includes("link-to-your") || currentIcon === "") {
+                currentIcon = "https://cdn-icons-png.flaticon.com/512/5124/5124017.png";
+            }
+
+            // Check download link: Agar apk link toota hai toh blank download lagayein block hone se bachane ke liye
+            let downloadLink = app.apk || "#";
+
             container.innerHTML += `
                 <div class="app-card">
-                    <img src="${app.icon || 'https://via.placeholder.com/90'}" alt="${app.name}">
-                    <h3>${app.name}</h3>
+                    <img src="${currentIcon}" alt="${app.name || 'Android App'}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5124/5124017.png'">
+                    <h3>${app.name || 'Unnamed App'}</h3>
                     <p>${app.description || 'No description available.'}</p>
-                    <a class="btn" href="${app.apk}" target="_blank">Download APK</a>
+                    <a class="btn" href="${downloadLink}" target="_blank">Download APK</a>
                 </div>
             `;
         });
@@ -338,7 +346,7 @@ async function loadApps(){
     }
 }
 
-// Instant Client-side Search Function (Sirf Title matching karega)
+// Search Function
 function searchApps() {
     let input = document.getElementById("searchInput").value.toLowerCase();
     let cards = document.querySelectorAll(".app-card");
@@ -353,7 +361,7 @@ function searchApps() {
     });
 }
 
-// Page load par automatically function chalayein
+// Page load par fetch karein
 loadApps();
 </script>
 
