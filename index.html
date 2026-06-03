@@ -120,17 +120,22 @@ font-size:18px;
 font-weight:bold;
 transition:.3s;
 min-width:180px;
+cursor: pointer;
 }
 
-.category:hover{
-transform:translateY(-5px);
-box-shadow:0 8px 25px rgba(37,99,235,.15);
+.category:hover, .category.active {
+    transform:translateY(-5px);
+    box-shadow:0 8px 25px rgba(37,99,235,.15);
+    background: #eff6ff;
+    border-color: #2563eb;
 }
+
 .category a{
 text-decoration:none;
 color:#2563eb;
 display:block;
 }
+
 .apps{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
@@ -144,6 +149,7 @@ border-radius:20px;
 border:1px solid #e5e7eb;
 box-shadow:0 4px 15px rgba(0,0,0,.05);
 text-align:center;
+transition: .3s;
 }
 
 .app-card img{
@@ -223,7 +229,6 @@ text-decoration:none;
 color:#2563eb;
 }
 
-/* Responsive adjustment for mobiles */
 @media (max-width: 768px) {
     .hero h1 { font-size: 45px; }
     header { flex-direction: column; gap: 15px; text-align: center; }
@@ -240,7 +245,6 @@ color:#2563eb;
 <a href="index.html">Home</a>
 <a href="#categories">Categories</a>
 <a href="#latestapps">Latest Apps</a>
-<a href="contact.html">Help</a>
 <a href="#feedback">Feedback</a>
 </nav>
 </header>
@@ -254,19 +258,21 @@ color:#2563eb;
 </div>
 </section>
 
+<!-- UPDATED: Dynamic Category Buttons -->
 <section class="section" id="categories">
 <div class="categories">
-<div class="category"><a href="social.html">📱 Social Apps</a></div>
-<div class="category"><a href="ai.html">🤖 AI Apps</a></div>
-<div class="category"><a href="comingsoon.html">🛠 Tools</a></div>
-<div class="category"><a href="comingsoon.html">🎮 Games</a></div>
-<div class="category"><a href="comingsoon.html">⚡ Utilities</a></div>
+<div class="category active" onclick="filterCategory('All', this)">🌐 All</div>
+<div class="category" onclick="filterCategory('Social', this)">📱 Social Apps</div>
+<div class="category" onclick="filterCategory('AI', this)">🤖 AI Apps</div>
+<div class="category" onclick="filterCategory('Tools', this)">🛠 Tools</div>
+<div class="category" onclick="filterCategory('Games', this)">🎮 Games</div>
+<div class="category" onclick="filterCategory('Utilities', this)">⚡ Utilities</div>
 </div>
 </section>
 
 <section class="section" id="latestapps">
 <div class="ad-box">Google AdSense Banner Area</div>
-<h2 class="title">Latest Uploaded Apps</h2>
+<h2 class="title" id="section-title">Latest Uploaded Apps</h2>
 <div id="apps-container" class="apps">
     <p style="grid-column: 1/-1; text-align: center; color: #64748b;">Loading amazing apps...</p>
 </div>
@@ -296,13 +302,11 @@ color:#2563eb;
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// Supabase Connection Credentials
 const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Supabase se data fetch karne ka function
 async function loadApps(){
     try {
         let { data: apps, error } = await supabaseClient
@@ -313,26 +317,24 @@ async function loadApps(){
         if (error) throw error;
 
         const container = document.getElementById("apps-container");
-        container.innerHTML = ""; // Loader text ko remove karne ke liye
+        container.innerHTML = ""; 
 
         if(!apps || apps.length === 0) {
             container.innerHTML = "<p style='grid-column:1/-1; text-align:center; color:#64748b;'>No apps uploaded yet.</p>";
             return;
         }
 
-        // Loops chala kar cards display karna safely
         apps.forEach(app => {
-            // Check image: Agar test image link toota hua hai toh safe placeholder icon lagayein
             let currentIcon = app.icon;
             if(!currentIcon || currentIcon.includes("link-to-your") || currentIcon === "") {
                 currentIcon = "https://cdn-icons-png.flaticon.com/512/5124/5124017.png";
             }
 
-            // Check download link: Agar apk link toota hai toh blank download lagayein block hone se bachane ke liye
             let downloadLink = app.apk || "#";
 
+            // UPDATED: Added data-category attribute safely
             container.innerHTML += `
-                <div class="app-card">
+                <div class="app-card" data-category="${app.category || 'Tools'}">
                     <img src="${currentIcon}" alt="${app.name || 'Android App'}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5124/5124017.png'">
                     <h3>${app.name || 'Unnamed App'}</h3>
                     <p>${app.description || 'No description available.'}</p>
@@ -346,7 +348,45 @@ async function loadApps(){
     }
 }
 
-// Search Function
+// NEW FUNCTION: Filters apps dynamically without changing page
+function filterCategory(categoryName, element) {
+    // Active class styling toggle
+    document.querySelectorAll('.category').forEach(cat => cat.classList.remove('active'));
+    element.classList.add('active');
+
+    // Section title change
+    const sectionTitle = document.getElementById("section-title");
+    if(categoryName === "All") {
+        sectionTitle.innerText = "Latest Uploaded Apps";
+    } else {
+        sectionTitle.innerText = categoryName + " Apps";
+    }
+
+    // Filter cards loop
+    let cards = document.querySelectorAll(".app-card");
+    let count = 0;
+
+    cards.forEach(card => {
+        let cardCategory = card.getAttribute("data-category");
+        
+        if(categoryName === "All" || cardCategory.toLowerCase() === categoryName.toLowerCase()) {
+            card.style.display = ""; 
+            count++;
+        } else {
+            card.style.display = "none"; 
+        }
+    });
+
+    // If no apps found in selected category
+    const container = document.getElementById("apps-container");
+    const existingNoMsg = document.getElementById("no-apps-msg");
+    if(existingNoMsg) existingNoMsg.remove();
+
+    if(count === 0) {
+        container.insertAdjacentHTML('beforeend', `<p id="no-apps-msg" style="grid-column:1/-1; text-align:center; color:#64748b; margin-top:20px;">No apps available under ${categoryName} category right now.</p>`);
+    }
+}
+
 function searchApps() {
     let input = document.getElementById("searchInput").value.toLowerCase();
     let cards = document.querySelectorAll(".app-card");
@@ -361,7 +401,6 @@ function searchApps() {
     });
 }
 
-// Page load par fetch karein
 loadApps();
 </script>
 
