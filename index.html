@@ -318,63 +318,44 @@ Google AdSense Banner Area
 </p>
 
 </footer>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL =
-"https://ralinnuegsbuvlhwpzln.supabase.co";
 
-const SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
-const supabaseClient =
-supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  const container =
-document.getElementById("apps-container");
-
-container.innerHTML = "<h1>TEST</h1>";
 async function loadApps(){
 
-const { data, error } =
-await supabaseClient
-.from("apps")
-.select("*")
-.order("id",{ascending:false});
+const SHEET_ID =
+"1ln25z9fvIYXUFOPx-Ux93aPXrY5jG16CZhxmr8ddz8c";
 
-console.log("DATA:", data);
-console.log("ERROR:", error);
+const url =
+`https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
 
-if(error){
-console.log(error);
-return;
-}
+const res = await fetch(url);
+const data = await res.json();
 
 const container =
 document.getElementById("apps-container");
 
 container.innerHTML = "";
 
-data.forEach(app=>{
+data.forEach(app => {
 
 container.innerHTML += `
 <div class="app-card">
-<img src="${app.icon}">
-<h3>${app.name}</h3>
-<p>${app.description}</p>
-<a class="btn" href="${app.apk}">
+<img src="${app.Icon}">
+<h3>${app.Name}</h3>
+<p>${app.Description}</p>
+<a class="btn" href="${app.APK}">
 Download APK
 </a>
 </div>
 `;
-  container.innerHTML =
-"<h1 style='color:red'>Apps Found: " +
-data.length +
-"</h1>";
 
 });
 
 }
-alert("loadApps running");
+
 loadApps();
-</script>
+
+
 
 <script>
 function searchApps() {
