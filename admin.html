@@ -25,6 +25,7 @@ input:focus, textarea:focus, select:focus { border-color:#2563eb; background:whi
 </head>
 <body>
 
+<!-- STEP 1: ADMIN LOGIN LOCK -->
 <div id="login-box" class="admin-card">
     <h1>ShanPalia Lock 🔒</h1>
     <div class="form-group">
@@ -36,6 +37,7 @@ input:focus, textarea:focus, select:focus { border-color:#2563eb; background:whi
     <p id="login-error" class="error" style="margin-top:15px;"></p>
 </div>
 
+<!-- STEP 2: ACTUAL UPLOAD PANEL -->
 <div id="upload-panel" class="admin-card hidden">
     <h1>Upload New APK 🚀</h1>
     
@@ -86,10 +88,9 @@ const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 🔑 AAPKA SECRET PASSWORD (Ise aap badal bhi sakte hain)
-const SHANPALIA_SECRET_KEY = "shanpalia786";
+// 🔑 AAPKA NAYA SECRET PASSWORD
+const SHANPALIA_SECRET_KEY = "kss@1#HAFSA";
 
-// Login check system
 function verifyAdmin() {
     const enteredKey = document.getElementById("secretKeyInput").value;
     const errorEl = document.getElementById("login-error");
@@ -102,7 +103,6 @@ function verifyAdmin() {
     }
 }
 
-// Database me upload karne ka code
 async function uploadApp() {
     const name = document.getElementById("appName").value.trim();
     const category = document.getElementById("appCategory").value;
@@ -125,7 +125,6 @@ async function uploadApp() {
         btn.innerText = "Uploading to Database...";
         msgEl.innerText = "";
 
-        // Insert command with ratings and downloads default setup
         const { data, error } = await supabaseClient
             .from('apps')
             .insert([
@@ -145,7 +144,6 @@ async function uploadApp() {
         msgEl.className = "success";
         msgEl.innerText = "🎉 App uploaded successfully! Main website par live ho gayi.";
         
-        // Form clear logic
         document.getElementById("appName").value = "";
         document.getElementById("appIcon").value = "";
         document.getElementById("appApk").value = "";
