@@ -1,148 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShanPalia APK Hub Admin</title>
-
-    <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 30px;
-            background: #f4f7fe;
-            color: #333;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        }
-
-        h1 { color: #2563eb; text-align: center; margin-bottom: 25px; }
-        label { font-weight: bold; font-size: 14px; color: #475569; display: block; margin-top: 10px; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0 18px 0; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
-        input:focus, textarea:focus, select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-        button { background: #2563eb; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        button:hover { background: #1d4ed8; }
-        .status-msg { text-align: center; font-weight: bold; margin-top: 15px; }
-
-        /* Login Screen Box */
-        .login-container { max-width: 400px; margin: 100px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-        #adminForm { display: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShanPalia Admin Panel</title>
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+body{ background:#f1f5f9; color:#111827; display:flex; justify-content:center; align-items:center; min-height:100vh; padding:20px; }
+.admin-card { background:white; width:100%; max-width:600px; padding:35px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.05); border:1px solid #e2e8f0; }
+h1 { color:#2563eb; margin-bottom:25px; font-size:28px; text-align:center; font-weight:800; }
+.form-group { margin-bottom:18px; }
+label { display:block; margin-bottom:8px; font-weight:bold; color:#475569; font-size:14px; }
+input, textarea, select { width:100%; padding:14px; border:1px solid #cbd5e1; border-radius:10px; font-size:15px; outline:none; background:#f8fafc; }
+input:focus, textarea:focus, select:focus { border-color:#2563eb; background:white; }
+.btn-submit { background:#2563eb; color:white; border:none; width:100%; padding:15px; border-radius:10px; font-size:16px; font-weight:bold; cursor:pointer; margin-top:10px; transition:0.2s; }
+.btn-submit:hover { background:#1d4ed8; }
+#login-box { text-align:center; }
+.hidden { display:none; }
+#status-msg { text-align:center; margin-top:15px; font-weight:bold; }
+.success { color:#10b981; }
+.error { color:#ef4444; }
+.nav-back { display:inline-block; margin-top:15px; color:#2563eb; text-decoration:none; font-weight:bold; font-size:14px; }
+</style>
 </head>
 <body>
 
-<!-- 1. LOGIN SCREEN -->
-<div id="loginBox" class="login-container">
-    <h2>🔒 Admin Login</h2>
-    <p style="color: #64748b; font-size: 14px; margin-bottom: 15px;">Enter password to access Admin Panel</p>
-    <input type="password" id="adminPassword" placeholder="Enter Admin Password">
-    <button onclick="checkPassword()">Login</button>
-    <div id="loginError" style="color: red; margin-top: 10px; font-weight: bold;"></div>
+<div id="login-box" class="admin-card">
+    <h1>ShanPalia Lock 🔒</h1>
+    <div class="form-group">
+        <label>Enter Admin Secret Key</label>
+        <input type="password" id="secretKeyInput" placeholder="Yahan apna password daalein...">
+    </div>
+    <button class="btn-submit" onclick="verifyAdmin()">Verify Admin</button>
+    <a href="index.html" class="nav-back">⬅ Back to Website</a>
+    <p id="login-error" class="error" style="margin-top:15px;"></p>
 </div>
 
-<!-- 2. MAIN ADMIN FORM -->
-<div id="adminForm">
-    <h1>ShanPalia APK Hub Admin</h1>
+<div id="upload-panel" class="admin-card hidden">
+    <h1>Upload New APK 🚀</h1>
+    
+    <div class="form-group">
+        <label>App Name</label>
+        <input type="text" id="appName" placeholder="e.g., Social Finder">
+    </div>
 
-    <label for="name">App Name</label>
-    <input id="name" placeholder="E.g., Social Finder">
+    <div class="form-group">
+        <label>Category</label>
+        <select id="appCategory">
+            <option value="Social">📱 Social Apps</option>
+            <option value="AI">🤖 AI Apps</option>
+            <option value="Tools">🛠 Tools</option>
+            <option value="Games">🎮 Games</option>
+            <option value="Utilities">⚡ Utilities</option>
+        </select>
+    </div>
 
-    <label for="icon">Icon URL</label>
-    <input id="icon" placeholder="E.g., https://cdn-icons-png.flaticon.com/512/725/725281.png">
+    <div class="form-group">
+        <label>Flaticon Icon URL</label>
+        <input type="text" id="appIcon" placeholder="Paste flaticon cdn link here...">
+    </div>
 
-    <label for="apk">APK Download Link</label>
-    <input id="apk" placeholder="E.g., https://files.appsgeyser.com/Your_App_Link">
+    <div class="form-group">
+        <label>MediaFire APK Download URL</label>
+        <input type="text" id="appApk" placeholder="Paste MediaFire file link here...">
+    </div>
 
-    <label for="description">Description</label>
-    <textarea id="description" rows="5" placeholder="Write app details here..."></textarea>
+    <div class="form-group">
+        <label>Initial Rating (Optional)</label>
+        <input type="text" id="appRating" value="4.5" placeholder="e.g., 4.8">
+    </div>
 
-    <label for="category">Category</label>
-    <select id="category">
-        <option value="Social">📱 Social</option>
-        <option value="AI">🤖 AI</option>
-        <option value="Tools">🛠 Tools</option>
-        <option value="Games">🎮 Games</option>
-        <option value="Utilities">⚡ Utilities</option>
-    </select>
+    <div class="form-group">
+        <label>App Description</label>
+        <textarea id="appDescription" rows="4" placeholder="Write details about the app..."></textarea>
+    </div>
 
-    <button onclick="addApp()" id="submitBtn">Add App</button>
-    <div id="status" class="status-msg"></div>
+    <button class="btn-submit" id="submitBtn" onclick="uploadApp()">Publish App Live</button>
+    <p id="status-msg"></p>
+    <center><a href="index.html" class="nav-back">View Main Website</a></center>
 </div>
 
-<!-- Supabase CDN Link -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-const SECRET_PASSWORD = "ShanPalia@2026"; 
 const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let supabaseClient = null;
+// 🔑 AAPKA SECRET PASSWORD (Ise aap badal bhi sakte hain)
+const SHANPALIA_SECRET_KEY = "shanpalia786";
 
-function checkPassword() {
-    const enteredPass = document.getElementById("adminPassword").value;
-    const loginError = document.getElementById("loginError");
+// Login check system
+function verifyAdmin() {
+    const enteredKey = document.getElementById("secretKeyInput").value;
+    const errorEl = document.getElementById("login-error");
 
-    if(enteredPass === SECRET_PASSWORD) {
-        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("adminForm").style.display = "block";
+    if(enteredKey === SHANPALIA_SECRET_KEY) {
+        document.getElementById("login-box").classList.add("hidden");
+        document.getElementById("upload-panel").classList.remove("hidden");
     } else {
-        loginError.innerText = "❌ Wrong Password! Try again.";
+        errorEl.innerText = "❌ Invalid Key! Aap admin nahi hain.";
     }
 }
 
-async function addApp(){
-    if(!supabaseClient) return;
-
-    const nameInput = document.getElementById("name");
-    const iconInput = document.getElementById("icon");
-    const apkInput = document.getElementById("apk");
-    const descInput = document.getElementById("description");
-    const catInput = document.getElementById("category");
-    const statusDiv = document.getElementById("status");
+// Database me upload karne ka code
+async function uploadApp() {
+    const name = document.getElementById("appName").value.trim();
+    const category = document.getElementById("appCategory").value;
+    const icon = document.getElementById("appIcon").value.trim();
+    const apk = document.getElementById("appApk").value.trim();
+    const rating = document.getElementById("appRating").value.trim() || "4.5";
+    const description = document.getElementById("appDescription").value.trim();
+    
+    const msgEl = document.getElementById("status-msg");
     const btn = document.getElementById("submitBtn");
 
-    if(!nameInput.value || !iconInput.value || !apkInput.value || !descInput.value){
-        statusDiv.style.color = "red";
-        statusDiv.innerText = "⚠️ Please fill all fields!";
+    if(!name || !icon || !apk || !description) {
+        msgEl.className = "error";
+        msgEl.innerText = "⚠ Please fill all required fields!";
         return;
     }
 
-    statusDiv.style.color = "orange";
-    statusDiv.innerText = "Uploading to Database...";
-    btn.disabled = true;
-    btn.innerText = "Please wait...";
+    try {
+        btn.disabled = true;
+        btn.innerText = "Uploading to Database...";
+        msgEl.innerText = "";
 
-    const { error } = await supabaseClient
-        .from("apps")
-        .insert([{
-            name: nameInput.value.trim(),
-            icon: iconInput.value.trim(),
-            apk: apkInput.value.trim(),
-            description: descInput.value.trim(),
-            category: catInput.value
-        }]);
+        // Insert command with ratings and downloads default setup
+        const { data, error } = await supabaseClient
+            .from('apps')
+            .insert([
+                { 
+                    name: name, 
+                    category: category, 
+                    icon: icon, 
+                    apk: apk, 
+                    rating: rating, 
+                    downloads: 0, 
+                    description: description 
+                }
+            ]);
 
-    btn.disabled = false;
-    btn.innerText = "Add App";
+        if (error) throw error;
 
-    if(error){
-        console.error(error);
-        statusDiv.style.color = "red";
-        statusDiv.innerText = "❌ Error: " + error.message;
-    } else {
-        statusDiv.style.color = "green";
-        statusDiv.innerText = "🎉 App Added Successfully!";
+        msgEl.className = "success";
+        msgEl.innerText = "🎉 App uploaded successfully! Main website par live ho gayi.";
         
-        nameInput.value = "";
-        iconInput.value = "";
-        apkInput.value = "";
-        descInput.value = "";
+        // Form clear logic
+        document.getElementById("appName").value = "";
+        document.getElementById("appIcon").value = "";
+        document.getElementById("appApk").value = "";
+        document.getElementById("appDescription").value = "";
+        
+    } catch (error) {
+        console.error(error);
+        msgEl.className = "error";
+        msgEl.innerText = "❌ Upload failed: " + error.message;
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Publish App Live";
     }
 }
 </script>
-
 </body>
 </html>
