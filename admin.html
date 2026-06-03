@@ -69,97 +69,143 @@
             font-weight: bold;
             margin-top: 15px;
         }
+
+        /* Login Box Styling */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        /* Shuruat me admin form hide rahega */
+        #adminForm {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-<h1>ShanPalia APK Hub Admin</h1>
+<div id="loginBox" class="login-container">
+    <h2>🔒 Admin Login</h2>
+    <p style="color: #64748b; font-size: 14px; margin-bottom: 15px;">Enter password to access Admin Panel</p>
+    <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+    <button onclick="checkPassword()">Login</button>
+    <div id="loginError" style="color: red; margin-top: 10px; font-weight: bold;"></div>
+</div>
 
-<label for="name">App Name</label>
-<input id="name" placeholder="E.g., WhatsApp Plus">
+<div id="adminForm">
+    <h1>ShanPalia APK Hub Admin</h1>
 
-<label for="icon">Icon URL</label>
-<input id="icon" placeholder="E.g., https://site.com/logo.png">
+    <label for="name">App Name</label>
+    <input id="name" placeholder="E.g., WhatsApp Plus">
 
-<label for="apk">APK Download Link</label>
-<input id="apk" placeholder="E.g., Google Drive / Mediafire Link">
+    <label for="icon">Icon URL</label>
+    <input id="icon" placeholder="E.g., https://site.com/logo.png">
 
-<label for="description">Description</label>
-<textarea id="description" rows="4" placeholder="Write app details here..."></textarea>
+    <label for="apk">APK Download Link</label>
+    <input id="apk" placeholder="E.g., Google Drive / Mediafire Link">
 
-<label for="category">Category</label>
-<select id="category">
-    <option value="Social">📱 Social</option>
-    <option value="AI">🤖 AI</option>
-    <option value="Tools">🛠 Tools</option>
-    <option value="Games">🎮 Games</option>
-    <option value="Utilities">⚡ Utilities</option>
-</select>
+    <label for="description">Description</label>
+    <textarea id="description" rows="4" placeholder="Write app details here..."></textarea>
 
-<button onclick="addApp()" id="submitBtn">Add App</button>
-<div id="status" class="status-msg"></div>
+    <label for="category">Category</label>
+    <select id="category">
+        <option value="Social">📱 Social</option>
+        <option value="AI">🤖 AI</option>
+        <option value="Tools">🛠 Tools</option>
+        <option value="Games">🎮 Games</option>
+        <option value="Utilities">⚡ Utilities</option>
+    </select>
+
+    <button onclick="addApp()" id="submitBtn">Add App</button>
+    <div id="status" class="status-msg"></div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-    const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
+// 🔑 APNA SECRET PASSWORD YAHAN SET KAREIN
+const SECRET_PASSWORD = "ShanPalia@2026"; 
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
 
-    async function addApp(){
-        // Elements ko target karna
-        const nameInput = document.getElementById("name");
-        const iconInput = document.getElementById("icon");
-        const apkInput = document.getElementById("apk");
-        const descInput = document.getElementById("description");
-        const catInput = document.getElementById("category");
-        const statusDiv = document.getElementById("status");
-        const btn = document.getElementById("submitBtn");
+let supabaseClient = null;
 
-        // 1. Basic Validation (Khali data submit na ho)
-        if(!nameInput.value || !iconInput.value || !apkInput.value || !descInput.value){
-            statusDiv.style.color = "red";
-            statusDiv.innerText = "⚠️ Please fill all the fields!";
-            return;
-        }
+// Password Check Karne ka system
+function checkPassword() {
+    const enteredPass = document.getElementById("adminPassword").value;
+    const loginError = document.getElementById("loginError");
 
-        // Loading state show karna
-        statusDiv.style.color = "orange";
-        statusDiv.innerText = "Uploading to Database...";
-        btn.disabled = true;
-        btn.innerText = "Please wait...";
-
-        // 2. Supabase Insert Command
-        const { error } = await supabaseClient
-            .from("apps")
-            .insert([{
-                name: nameInput.value.trim(),
-                icon: iconInput.value.trim(),
-                apk: apkInput.value.trim(),
-                description: descInput.value.trim(),
-                category: catInput.value
-            }]);
-
-        // Loading state hatana
-        btn.disabled = false;
-        btn.innerText = "Add App";
-
-        if(error){
-            console.error(error);
-            statusDiv.style.color = "red";
-            statusDiv.innerText = "❌ Error: " + error.message;
-        } else {
-            statusDiv.style.color = "green";
-            statusDiv.innerText = "🎉 App Added Successfully!";
-            
-            // 3. Data add hone ke baad form auto-clear karna
-            nameInput.value = "";
-            iconInput.value = "";
-            apkInput.value = "";
-            descInput.value = "";
-        }
+    if(enteredPass === SECRET_PASSWORD) {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("adminForm").style.display = "block";
+    } else {
+        loginError.innerText = "❌ Wrong Password! Try again.";
     }
+}
+
+// Database me App upload karne ka function
+async function addApp(){
+    if(!supabaseClient) {
+        alert("Unauthorized access!");
+        return;
+    }
+
+    const nameInput = document.getElementById("name");
+    const iconInput = document.getElementById("icon");
+    const apkInput = document.getElementById("apk");
+    const descInput = document.getElementById("description");
+    const catInput = document.getElementById("category");
+    const statusDiv = document.getElementById("status");
+    const btn = document.getElementById("submitBtn");
+
+    // Form Validation
+    if(!nameInput.value || !iconInput.value || !apkInput.value || !descInput.value){
+        statusDiv.style.color = "red";
+        statusDiv.innerText = "⚠️ Please fill all fields!";
+        return;
+    }
+
+    statusDiv.style.color = "orange";
+    statusDiv.innerText = "Uploading to Database...";
+    btn.disabled = true;
+    btn.innerText = "Please wait...";
+
+    // Supabase Insert Command
+    const { error } = await supabaseClient
+        .from("apps")
+        .insert([{
+            name: nameInput.value.trim(),
+            icon: iconInput.value.trim(),
+            apk: apkInput.value.trim(),
+            description: descInput.value.trim(),
+            category: catInput.value
+        }]);
+
+    btn.disabled = false;
+    btn.innerText = "Add App";
+
+    if(error){
+        console.error(error);
+        statusDiv.style.color = "red";
+        statusDiv.innerText = "❌ Error: " + error.message;
+    } else {
+        statusDiv.style.color = "green";
+        statusDiv.innerText = "🎉 App Added Successfully!";
+        
+        // Form clear karna
+        nameInput.value = "";
+        iconInput.value = "";
+        apkInput.value = "";
+        descInput.value = "";
+    }
+}
 </script>
 
 </body>
