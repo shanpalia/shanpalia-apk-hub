@@ -1,93 +1,166 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>APK Admin Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShanPalia APK Hub Admin</title>
 
-<style>
-body{
-font-family:Arial;
-max-width:700px;
-margin:auto;
-padding:20px;
-}
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #f4f7fe;
+            color: #333;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
 
-input,textarea,select{
-width:100%;
-padding:12px;
-margin:8px 0;
-}
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-button{
-background:#2563eb;
-color:white;
-border:none;
-padding:12px;
-width:100%;
-cursor:pointer;
-}
-</style>
+        label {
+            font-weight: bold;
+            font-size: 14px;
+            color: #475569;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 18px 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .status-msg {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
 
 <h1>ShanPalia APK Hub Admin</h1>
 
-<input id="name" placeholder="App Name">
+<label for="name">App Name</label>
+<input id="name" placeholder="E.g., WhatsApp Plus">
 
-<input id="icon" placeholder="Icon URL">
+<label for="icon">Icon URL</label>
+<input id="icon" placeholder="E.g., https://site.com/logo.png">
 
-<input id="apk" placeholder="APK Link">
+<label for="apk">APK Download Link</label>
+<input id="apk" placeholder="E.g., Google Drive / Mediafire Link">
 
-<textarea id="description"
-placeholder="Description"></textarea>
+<label for="description">Description</label>
+<textarea id="description" rows="4" placeholder="Write app details here..."></textarea>
 
+<label for="category">Category</label>
 <select id="category">
-<option>Social</option>
-<option>AI</option>
-<option>Tools</option>
-<option>Games</option>
-<option>Utilities</option>
+    <option value="Social">📱 Social</option>
+    <option value="AI">🤖 AI</option>
+    <option value="Tools">🛠 Tools</option>
+    <option value="Games">🎮 Games</option>
+    <option value="Utilities">⚡ Utilities</option>
 </select>
 
-<button onclick="addApp()">
-Add App
-</button>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<button onclick="addApp()" id="submitBtn">Add App</button>
+<div id="status" class="status-msg"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+    const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
 
-const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
+    async function addApp(){
+        // Elements ko target karna
+        const nameInput = document.getElementById("name");
+        const iconInput = document.getElementById("icon");
+        const apkInput = document.getElementById("apk");
+        const descInput = document.getElementById("description");
+        const catInput = document.getElementById("category");
+        const statusDiv = document.getElementById("status");
+        const btn = document.getElementById("submitBtn");
 
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+        // 1. Basic Validation (Khali data submit na ho)
+        if(!nameInput.value || !iconInput.value || !apkInput.value || !descInput.value){
+            statusDiv.style.color = "red";
+            statusDiv.innerText = "⚠️ Please fill all the fields!";
+            return;
+        }
 
-async function addApp(){
+        // Loading state show karna
+        statusDiv.style.color = "orange";
+        statusDiv.innerText = "Uploading to Database...";
+        btn.disabled = true;
+        btn.innerText = "Please wait...";
 
-  const { error } = await supabaseClient
-  .from("apps")
-  .insert([{
-    name: document.getElementById("name").value,
-    icon: document.getElementById("icon").value,
-    apk: document.getElementById("apk").value,
-    description: document.getElementById("description").value,
-    category: document.getElementById("category").value
-  }]);
+        // 2. Supabase Insert Command
+        const { error } = await supabaseClient
+            .from("apps")
+            .insert([{
+                name: nameInput.value.trim(),
+                icon: iconInput.value.trim(),
+                apk: apkInput.value.trim(),
+                description: descInput.value.trim(),
+                category: catInput.value
+            }]);
 
-  if(error){
-    alert(error.message);
-  }else{
-    alert("App Added Successfully");
-  }
-}
+        // Loading state hatana
+        btn.disabled = false;
+        btn.innerText = "Add App";
 
+        if(error){
+            console.error(error);
+            statusDiv.style.color = "red";
+            statusDiv.innerText = "❌ Error: " + error.message;
+        } else {
+            statusDiv.style.color = "green";
+            statusDiv.innerText = "🎉 App Added Successfully!";
+            
+            // 3. Data add hone ke baad form auto-clear karna
+            nameInput.value = "";
+            iconInput.value = "";
+            apkInput.value = "";
+            descInput.value = "";
+        }
+    }
 </script>
-
 
 </body>
 </html>
