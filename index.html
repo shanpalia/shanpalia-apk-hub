@@ -6,7 +6,6 @@
 <title>ShanPalia APK Hub</title>
 
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -152,6 +151,7 @@ width:90px;
 height:90px;
 border-radius:20px;
 margin-bottom:15px;
+object-fit: cover;
 }
 
 .app-card h3{
@@ -223,17 +223,19 @@ text-decoration:none;
 color:#2563eb;
 }
 
+/* Responsive adjustment for mobiles */
+@media (max-width: 768px) {
+    .hero h1 { font-size: 45px; }
+    header { flex-direction: column; gap: 15px; text-align: center; }
+    nav a { margin: 0 8px; }
+}
 </style>
 </head>
 
 <body>
 
 <header>
-
-<div class="logo">
-ShanPalia APK Hub
-</div>
-
+<div class="logo">ShanPalia APK Hub</div>
 <nav>
 <a href="index.html">Home</a>
 <a href="#categories">Categories</a>
@@ -241,135 +243,119 @@ ShanPalia APK Hub
 <a href="contact.html">Help</a>
 <a href="#feedback">Feedback</a>
 </nav>
-
 </header>
 
 <section class="hero">
-
 <h1>ShanPalia APK Hub</h1>
-
-<p>
-Download Android Apps, AI Tools, Social Apps & Utilities
-</p>
-
+<p>Download Android Apps, AI Tools, Social Apps & Utilities</p>
 <div class="search-box">
 <input type="text" id="searchInput" placeholder="Search APKs..." onkeyup="searchApps()">
 <button onclick="searchApps()">Search</button>
 </div>
-
 </section>
-
 
 <section class="section" id="categories">
 <div class="categories">
-
 <div class="category"><a href="social.html">📱 Social Apps</a></div>
 <div class="category"><a href="ai.html">🤖 AI Apps</a></div>
 <div class="category"><a href="comingsoon.html">🛠 Tools</a></div>
 <div class="category"><a href="comingsoon.html">🎮 Games</a></div>
 <div class="category"><a href="comingsoon.html">⚡ Utilities</a></div>
-
 </div>
 </section>
+
 <section class="section" id="latestapps">
-
-<div class="ad-box">
-Google AdSense Banner Area
-</div>
-
+<div class="ad-box">Google AdSense Banner Area</div>
 <h2 class="title">Latest Uploaded Apps</h2>
-
-<div id="apps-container" class="apps"></div>
-
-</section>
-<section class="section" id="feedback">
-
-<h2 class="title">Send Feedback</h2>
-
-<div class="feedback">
-
-<input type="text" placeholder="Your Name">
-
-<input type="email" placeholder="Email Address">
-
-<textarea rows="5" placeholder="Write your feedback"></textarea>
-
-<button>Send Feedback</button>
-
+<div id="apps-container" class="apps">
+    <p style="grid-column: 1/-1; text-align: center; color: #64748b;">Loading amazing apps...</p>
 </div>
+</section>
 
+<section class="section" id="feedback">
+<h2 class="title">Send Feedback</h2>
+<div class="feedback">
+<input type="text" placeholder="Your Name">
+<input type="email" placeholder="Email Address">
+<textarea rows="5" placeholder="Write your feedback"></textarea>
+<button>Send Feedback</button>
+</div>
 </section>
 
 <footer>
-
 <h3>ShanPalia APK Hub</h3>
-
 <br>
-
 <a href="about.html">About Us</a>
 <a href="contact.html">Contact Us</a>
 <a href="privacy.html">Privacy Policy</a>
 <a href="terms.html">Terms & Conditions</a>
-
 <br><br>
-
-<p>
-© 2026 ShanPalia APK Hub. All Rights Reserved.
-</p>
-
+<p>© 2026 ShanPalia APK Hub. All Rights Reserved.</p>
 </footer>
-<script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// Supabase Connection Credentials
+const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Supabase se data fetch karne ka function
 async function loadApps(){
+    try {
+        // 'apps' table se saari rows lana aur unhe order karna taaki naye apps sabse pehle dikhein
+        let { data: apps, error } = await supabaseClient
+            .from('apps')
+            .select('*')
+            .order('id', { ascending: false });
 
-const SHEET_ID =
-"1ln25z9fvIYXUFOPx-Ux93aPXrY5jG16CZhxmr8ddz8c";
+        if (error) throw error;
 
-const url =
-`https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
+        const container = document.getElementById("apps-container");
+        container.innerHTML = ""; // Loader text ko remove karne ke liye
 
-const res = await fetch(url);
-const data = await res.json();
+        if(!apps || apps.length === 0) {
+            container.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>No apps uploaded yet.</p>";
+            return;
+        }
 
-const container =
-document.getElementById("apps-container");
-
-container.innerHTML = "";
-
-data.forEach(app => {
-
-container.innerHTML += `
-<div class="app-card">
-<img src="${app.Icon}">
-<h3>${app.Name}</h3>
-<p>${app.Description}</p>
-<a class="btn" href="${app.APK}">
-Download APK
-</a>
-</div>
-`;
-
-});
-
-}
-
-loadApps();
-
-
-
-<script>
-function searchApps() {
-  let input = document.getElementById("searchInput").value.toLowerCase();
-  let cards = document.querySelectorAll(".app-card");
-
-  cards.forEach(function(card){
-    if(card.innerText.toLowerCase().includes(input)){
-      card.style.display = "";
-    } else {
-      card.style.display = "none";
+        // Loops chala kar cards display karna
+        apps.forEach(app => {
+            container.innerHTML += `
+                <div class="app-card">
+                    <img src="${app.icon || 'https://via.placeholder.com/90'}" alt="${app.name}">
+                    <h3>${app.name}</h3>
+                    <p>${app.description || 'No description available.'}</p>
+                    <a class="btn" href="${app.apk}" target="_blank">Download APK</a>
+                </div>
+            `;
+        });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        document.getElementById("apps-container").innerHTML = "<p style='grid-column:1/-1; text-align:center; color:red;'>Failed to load apps. Please check connection.</p>";
     }
-  });
 }
+
+// Instant Client-side Search Function (Sirf Title matching karega)
+function searchApps() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let cards = document.querySelectorAll(".app-card");
+
+    cards.forEach(function(card){
+        let title = card.querySelector("h3").innerText.toLowerCase();
+        if(title.includes(input)){
+            card.style.display = "";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+
+// Page load par automatically function chalayein
+loadApps();
 </script>
+
 </body>
 </html>
