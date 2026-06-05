@@ -1,78 +1,631 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShanPalia APK Hub</title>
-    <meta property="og:title" content="ShanPalia APK Hub | Best Android Apps" />
-    <meta property="og:description" content="Download Android Apps, AI Tools, and Utilities safely. Fast links, no ads!" />
-    <meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/5124/5124017.png" />
-    <meta property="og:url" content="https://shanpalia.github.io/shanpalia-apk-hub/" />
-    <meta property="og:type" content="website" />
 
-    <style>
-        *{ margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
-        body{ background:#ffffff; color:#111827; }
-        header{ background:#ffffff; padding:18px 5%; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 12px rgba(0,0,0,.06); position:sticky; top:0; z-index:999; }
-        .logo{ font-size:30px; font-weight:700; color:#2563eb; text-decoration:none; }
-        nav { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        nav a{ text-decoration:none; color:#334155; font-weight:600; font-size: 15px; }
-        nav a.admin-btn { color: #ffffff !important; background: #dc2626 !important; padding: 8px 16px; border-radius: 30px; box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2); transition: 0.2s; font-size: 13px; }
-        .hero{ background:#ffffff; padding:100px 20px; text-align:center; }
-        .hero h1{ font-size:70px; font-weight:800; color:#2563eb; margin-bottom:20px; }
-        .apps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:25px; padding: 0 5% 70px 5%; }
-        .app-card{ background:white; padding:25px; border-radius:20px; border:1px solid #e5e7eb; box-shadow:0 4px 15px rgba(0,0,0,.05); text-align:center; transition: .3s; }
-        .app-card img{ width:90px; height:90px; border-radius:20px; margin-bottom:15px; object-fit: cover; }
-        .view-btn { display:inline-block; background:#2563eb; color:white; padding:10px 20px; border-radius:10px; margin-top:15px; font-weight:bold; font-size: 14px; text-decoration:none; }
-        @media (max-width: 768px) { .hero h1 { font-size: 42px; } }
-    </style>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ShanPalia APK Hub</title>
+
+
+
+<style>
+
+*{ margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+
+body{ background:#ffffff; color:#111827; }
+
+
+
+/* 👑 NAVIGATION HEADER SYSTEM */
+
+header{ background:#ffffff; padding:18px 5%; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 12px rgba(0,0,0,.06); position:sticky; top:0; z-index:999; }
+
+.logo{ font-size:30px; font-weight:700; color:#2563eb; text-decoration:none; }
+
+nav { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+
+nav a{ text-decoration:none; color:#334155; font-weight:600; font-size: 15px; }
+
+
+
+/* ADMIN BUTTON STYLING (RED COLOR HIGHLIGHT) */
+
+nav a.admin-btn { color: #ffffff !important; background: #dc2626 !important; padding: 8px 16px; border-radius: 30px; box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2); transition: 0.2s; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; }
+
+nav a.admin-btn:hover { background: #b91c1c !important; transform: translateY(-1px); }
+
+
+
+.hero{ background:#ffffff; padding:100px 20px; text-align:center; }
+
+.hero h1{ font-size:70px; font-weight:800; color:#2563eb; margin-bottom:20px; }
+
+.hero p{ font-size:22px; color:#64748b; margin-bottom:35px; }
+
+.search-box{ max-width:800px; margin:auto; display:flex; background:#ffffff; border:2px solid #dbeafe; border-radius:60px; overflow:hidden; box-shadow:0 8px 25px rgba(37,99,235,.10); }
+
+.search-box input{ flex:1; padding:18px; border:none; outline:none; font-size:16px; }
+
+.search-box button{ background:#2563eb; color:white; border:none; padding:18px 35px; cursor:pointer; font-weight:bold; }
+
+.section{ padding:70px 5%; }
+
+.title{ text-align:center; font-size:40px; margin-bottom:40px; color:#2563eb; }
+
+.categories{ display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:30px 0; }
+
+.category{ background:white; padding:20px; border-radius:20px; text-align:center; border:1px solid #e5e7eb; box-shadow:0 4px 15px rgba(0,0,0,.05); font-size:18px; font-weight:bold; transition:.3s; min-width:180px; cursor: pointer; color:#2563eb; }
+
+.category:hover, .category.active { transform:translateY(-5px); box-shadow:0 8px 25px rgba(37,99,235,.15); background: #eff6ff; border-color: #2563eb; }
+
+.apps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:25px; }
+
+
+
+/* APP CARD INTERFACES */
+
+.app-card{ background:white; padding:25px; border-radius:20px; border:1px solid #e5e7eb; box-shadow:0 4px 15px rgba(0,0,0,.05); text-align:center; transition: .3s; cursor: pointer; text-decoration: none; color: inherit; display: block; }
+
+.app-card:hover{ transform: translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,.1); }
+
+.app-card img{ width:90px; height:90px; border-radius:20px; margin-bottom:15px; object-fit: cover; }
+
+.app-card h3{ margin-bottom:10px; font-size:20px; color:#1e293b; }
+
+.meta-info { display: flex; justify-content: center; gap: 15px; font-size: 13px; color: #64748b; margin-top: 10px; font-weight: bold; }
+
+.meta-info .rating { color: #eab308; }
+
+.meta-info .dl { color: #10b981; }
+
+.view-btn { display:inline-block; background:#2563eb; color:white; padding:10px 20px; border-radius:10px; margin-top:15px; font-weight:bold; font-size: 14px; }
+
+.ad-box{ background:#eff6ff; padding:40px; text-align:center; border:2px dashed #2563eb; border-radius:20px; margin-bottom:50px; font-size:22px; font-weight:bold; color:#2563eb; }
+
+
+
+/* FEEDBACK STYLING */
+
+.feedback{ max-width:700px; margin:auto; background:white; padding:30px; border-radius:20px; border:1px solid #e5e7eb; box-shadow:0 4px 15px rgba(0,0,0,.05); }
+
+.feedback input, .feedback textarea{ width:100%; padding:14px; margin-top:12px; border:1px solid #cbd5e1; border-radius:10px; outline:none; font-size:15px; }
+
+.feedback input:focus, .feedback textarea:focus { border-color:#2563eb; }
+
+.feedback button{ width:100%; margin-top:15px; background:#2563eb; color:white; border:none; padding:14px 25px; border-radius:10px; cursor:pointer; font-weight:bold; font-size:16px; transition:0.2s; }
+
+.feedback button:hover{ background:#1d4ed8; }
+
+
+
+/* 🎨 PREMIUM SHARE BUTTONS CSS (ORIGINAL DESIGN) */
+
+.share-btn-new {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: white !important;
+
+    text-decoration: none;
+
+    padding: 12px 24px;
+
+    border-radius: 30px;
+
+    font-weight: bold;
+
+    font-size: 14px;
+
+    transition: 0.2s ease-in-out;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+
+}
+
+.share-btn-new:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+
+}
+
+.share-btn-new img {
+
+    width: 20px;
+
+    height: 20px;
+
+    object-fit: contain;
+
+}
+
+
+
+footer{ background:#f8fafc; padding:40px; text-align:center; border-top:1px solid #e5e7eb; }
+
+footer a{ margin:0 10px; text-decoration:none; color:#2563eb; }
+
+
+
+/* 📱 MOBILE RESPONSIVENESS FIX */
+
+@media (max-width: 768px) { 
+
+    .hero h1 { font-size: 42px; } 
+
+    header { flex-direction: column; gap: 12px; text-align: center; padding: 15px; } 
+
+    nav { justify-content: center; gap: 12px; } 
+
+    nav a.admin-btn { display: inline-block; padding: 6px 14px; } 
+
+}
+
+</style>
+
 </head>
+
 <body>
 
+
+
 <header>
-    <a href="index.html" class="logo">ShanPalia APK Hub</a>
-    <nav>
-        <a href="admin.html" class="admin-btn">👑 Admin Panel</a>
-    </nav>
+
+<a href="index.html" class="logo">ShanPalia APK Hub</a>
+
+<nav>
+
+<a href="#">Home</a>
+
+<a href="#categories">Categories</a>
+
+<a href="#latestapps">Latest Apps</a>
+
+<a href="#feedback">Feedback</a>
+
+<!-- 🔥 LIVE ADMIN PANEL BUTTON -->
+
+<a href="admin.html" class="admin-btn">👑 Admin Panel</a>
+
+</nav>
+
 </header>
 
-<section class="hero">
-    <h1>ShanPalia APK Hub</h1>
-    <p>Download Android Apps, AI Tools, Social Apps & Utilities</p>
-</section>
 
-<div id="apps-container" class="apps">
-    <p style="grid-column: 1/-1; text-align: center;">Loading amazing apps...</p>
+
+<section class="hero">
+
+<h1>ShanPalia APK Hub</h1>
+
+<p>Download Android Apps, AI Tools, Social Apps & Utilities</p>
+
+<div class="search-box">
+
+<input type="text" id="searchInput" placeholder="Search APKs..." onkeyup="searchApps()">
+
+<button onclick="searchApps()">Search</button>
+
 </div>
 
+</section>
+
+
+
+<section class="section" id="categories">
+
+<div class="categories">
+
+<div class="category active" onclick="filterCategory('All', this)">🌐 All</div>
+
+<div class="category" onclick="filterCategory('Social', this)">📱 Social Apps</div>
+
+<div class="category" onclick="filterCategory('AI', this)">🤖 AI Apps</div>
+
+<div class="category" onclick="filterCategory('Tools', this)">🛠 Tools</div>
+
+<div class="category" onclick="filterCategory('Games', this)">🎮 Games</div>
+
+<div class="category" onclick="filterCategory('Utilities', this)">⚡ Utilities</div>
+
+</div>
+
+</section>
+
+
+
+<section class="section" id="latestapps">
+
+<div class="ad-box">Google AdSense Banner Area</div>
+
+<h2 class="title" id="section-title">Latest Uploaded Apps</h2>
+
+<div id="apps-container" class="apps">
+
+    <p style="grid-column: 1/-1; text-align: center; color: #64748b;">Loading amazing apps...</p>
+
+</div>
+
+</section>
+
+
+
+<!-- 📩 MAIL FEEDBACK SECTION -->
+
+<section class="section" id="feedback">
+
+<h2 class="title">Send Feedback</h2>
+
+<!-- ⚠️ YAHA APNA FORMSPREE ID "YOUR_FORM_ID_HERE" KI JAGAH ZARUR DAAL DENA -->
+
+<form class="feedback" action="https://formspree.io/f/YOUR_FORM_ID_HERE" method="POST">
+
+    <input type="text" name="name" placeholder="Your Name" required>
+
+    <input type="email" name="email" placeholder="Email Address" required>
+
+    <textarea name="message" rows="5" placeholder="Write your feedback" required></textarea>
+
+    <button type="submit">Send Feedback</button>
+
+</form>
+
+</section>
+
+
+
+<!-- 📢 PREMIUM SOCIAL MEDIA SHARE BUTTONS WITH ORIGINAL ICONS (UPDATED WITH YOUR ACTUAL LINK) -->
+
+<section class="section" style="text-align: center; background: #f8fafc; border-top: 1px solid #e5e7eb; padding: 50px 5%;">
+
+    <h2 class="title" style="font-size: 28px; margin-bottom: 15px;">Share ShanPalia APK Hub 🚀</h2>
+
+    <p style="color: #64748b; margin-bottom: 30px; font-weight: bold; font-size: 15px;">Share this website with your friends and community:</p>
+
+    
+
+    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; max-width: 1000px; margin: auto;">
+
+        
+
+        <!-- 🟢 WhatsApp (Updated Link) -->
+
+        <a href="https://api.whatsapp.com/send?text=%F0%9F%9A%80%20*ShanPalia%20APK%20Hub%20Is%20Live!*%20%F0%9F%93%B1%0ANow%20download%20all%20your%20favorite%20Android%20Apps%2C%20AI%20Tools%2C%20and%20Utilities%20safely%20and%20quickly%20from%20one%20place.%20Super%20fast%20MediaFire%20download%20links%20with%20no%20annoying%20ads!%0A%F0%9F%91%89%20*Visit%20Now:*%20https%3A%2F%2Fshanpalia.github.io%2Fshanpalia-apk-hub%2F" 
+
+           target="_blank" class="share-btn-new" style="background: #25D366;">
+
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp"> Share on WhatsApp
+
+        </a>
+
+
+
+        <!-- 🔵 Facebook (Updated Link) -->
+
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://shanpalia.github.io/shanpalia-apk-hub/" 
+
+           target="_blank" class="share-btn-new" style="background: #1877F2;">
+
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"> Share on Facebook
+
+        </a>
+
+
+
+        <!-- ✈️ Telegram (Updated Link) -->
+
+        <a href="https://t.me/share/url?url=https://shanpalia.github.io/shanpalia-apk-hub/&text=%F0%9F%9A%80%20*ShanPalia%20APK%20Hub%20Is%20Live!*%20%F0%9F%93%B1%0ANow%20download%20all%20your%20favorite%20Android%20Apps%2C%20AI%20Tools%2C%20and%20Utilities%20safely%20and%20quickly%20from%20one%20place.%20Super%20fast%20MediaFire%20download%20links%20with%20no%20annoying%20ads!" 
+
+           target="_blank" class="share-btn-new" style="background: #0088cc;">
+
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" alt="Telegram"> Share on Telegram
+
+        </a>
+
+
+
+        <!-- 📸 Instagram (Auto-Copy On Click) -->
+
+        <a href="https://www.instagram.com/" onclick="copyShareText(event)" 
+
+           target="_blank" class="share-btn-new" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">
+
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram"> Share on Instagram
+
+        </a>
+
+
+
+        <!-- 🔴 YouTube (Auto-Copy On Click) -->
+
+        <a href="https://www.youtube.com/" onclick="copyShareText(event)" 
+
+           target="_blank" class="share-btn-new" style="background: #FF0000;">
+
+            <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube"> Share on YouTube
+
+        </a>
+
+
+
+    </div>
+
+</section>
+
+
+
+<footer>
+
+<h3>ShanPalia APK Hub</h3>
+
+<br>
+
+<a href="#">About Us</a>
+
+<a href="#">Contact Us</a>
+
+<a href="#">Privacy Policy</a>
+
+<a href="#">Terms & Conditions</a>
+
+<br><br>
+
+<p>© 2026 ShanPalia APK Hub. All Rights Reserved.</p>
+
+</footer>
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+
 <script>
-    const SUPABASE_URL = "https://ralinunegsbuvlhwpzln.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
-    const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function loadApps() {
-        const container = document.getElementById('apps-container');
-        let { data: apps, error } = await supabase.from('apps').select('*');
+const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
 
-        if (error) {
-            container.innerHTML = '<p>Error loading apps.</p>';
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+
+async function loadApps(){
+
+    try {
+
+        let { data: apps, error } = await supabaseClient
+
+            .from('apps')
+
+            .select('*')
+
+            .order('id', { ascending: false });
+
+
+
+        if (error) throw error;
+
+
+
+        const container = document.getElementById("apps-container");
+
+        container.innerHTML = ""; 
+
+
+
+        if(!apps || apps.length === 0) {
+
+            container.innerHTML = "<p style='grid-column:1/-1; text-align:center; color:#64748b;'>No apps uploaded yet.</p>";
+
             return;
+
         }
 
-        container.innerHTML = '';
+
+
+        const uniqueApps = [];
+
+        const seenNames = new Set();
+
+
+
         apps.forEach(app => {
-            container.innerHTML += `
-                <div class="app-card">
-                    <img src="${app.icon || 'https://cdn-icons-png.flaticon.com/512/5124/5124017.png'}" alt="App">
-                    <h3>${app.name}</h3>
-                    <a href="${app.download_link}" class="view-btn">Download Now</a>
-                </div>
-            `;
+
+            let appNameClean = app.name ? app.name.trim().toLowerCase() : "";
+
+            if (appNameClean && !seenNames.has(appNameClean)) {
+
+                seenNames.add(appNameClean);
+
+                uniqueApps.push(app); 
+
+            }
+
         });
+
+
+
+        uniqueApps.forEach(app => {
+
+            let currentIcon = app.icon;
+
+            if(!currentIcon || currentIcon.includes("link-to-your") || currentIcon === "") {
+
+                currentIcon = "https://cdn-icons-png.flaticon.com/512/5124/5124017.png";
+
+            }
+
+
+
+            let dlCount = app.downloads || 0;
+
+            let starRating = app.rating || "4.5";
+
+
+
+            container.innerHTML += `
+
+                <a href="app.html?id=${app.id}" class="app-card" data-category="${app.category || 'Tools'}">
+
+                    <img src="${currentIcon}" alt="${app.name || 'Android App'}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5124/5124017.png'">
+
+                    <h3>${app.name || 'Unnamed App'}</h3>
+
+                    <div class="meta-info">
+
+                        <span class="rating">⭐ ${starRating}</span>
+
+                        <span class="dl">📥 ${dlCount} DLs</span>
+
+                    </div>
+
+                    <span class="view-btn">View Details</span>
+
+                </a>
+
+            `;
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("apps-container").innerHTML = "<p style='grid-column:1/-1; text-align:center; color:red;'>Failed to load apps.</p>";
+
     }
-    loadApps();
+
+}
+
+
+
+function filterCategory(categoryName, element) {
+
+    document.querySelectorAll('.category').forEach(cat => cat.classList.remove('active'));
+
+    element.classList.add('active');
+
+
+
+    const sectionTitle = document.getElementById("section-title");
+
+    if(categoryName === "All") {
+
+        sectionTitle.innerText = "Latest Uploaded Apps";
+
+    } else {
+
+        sectionTitle.innerText = categoryName + " Apps";
+
+    }
+
+
+
+    let cards = document.querySelectorAll(".app-card");
+
+    let count = 0;
+
+
+
+    cards.forEach(card => {
+
+        let cardCategory = card.getAttribute("data-category");
+
+        if(categoryName === "All" || cardCategory.toLowerCase() === categoryName.toLowerCase()) {
+
+            card.style.display = ""; 
+
+            count++;
+
+        } else {
+
+            card.style.display = "none"; 
+
+        }
+
+    });
+
+
+
+    const existingNoMsg = document.getElementById("no-apps-msg");
+
+    if(existingNoMsg) existingNoMsg.remove();
+
+
+
+    if(count === 0) {
+
+        const container = document.getElementById("apps-container");
+
+        container.insertAdjacentHTML('beforeend', `<p id="no-apps-msg" style="grid-column:1/-1; text-align:center; color:#64748b; margin-top:40px; font-weight:bold;">No apps available under "${categoryName}" category right now.</p>`);
+
+    }
+
+}
+
+
+
+function searchApps() {
+
+    let input = document.getElementById("searchInput").value.toLowerCase();
+
+    let cards = document.querySelectorAll(".app-card");
+
+    cards.forEach(function(card){
+
+        let title = card.querySelector("h3").innerText.toLowerCase();
+
+        if(title.includes(input)){
+
+            card.style.display = "";
+
+        } else {
+
+            card.style.display = "none";
+
+        }
+
+    });
+
+}
+
+
+
+// AUTOMATIC COPY SYSTEM WITH YOUR EXACT URL
+
+function copyShareText(e) {
+
+    const textToCopy = `🚀 ShanPalia APK Hub Is Live! 📱\nNow download all your favorite Android Apps, AI Tools, and Utilities safely and quickly from one place. Super fast MediaFire download links with no annoying ads!\n👉 Visit Now: https://shanpalia.github.io/shanpalia-apk-hub/`;
+
+    
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+
+        alert("📢 Promotion text & link have been automatically copied to your clipboard! You can now easily paste it directly on the platform.");
+
+    }).catch(err => {
+
+        console.error("Copy failed", err);
+
+    });
+
+}
+
+
+
+loadApps();
+
 </script>
 
 </body>
+
 </html>
