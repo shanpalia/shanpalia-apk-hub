@@ -19,8 +19,9 @@
         .admin-btn { background: #dc2626; color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 14px; font-weight: bold; }
         .hero { padding: 60px 20px; text-align: center; }
         .apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px 5%; }
-        .app-card { background: #fff; padding: 20px; border-radius: 15px; text-align: center; border: 1px solid #e5e7eb; }
-        .app-card img { width: 80px; height: 80px; border-radius: 15px; margin-bottom: 10px; }
+        .app-card { background: #fff; padding: 20px; border-radius: 15px; text-align: center; border: 1px solid #e5e7eb; transition: 0.3s; }
+        .app-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .app-card img { width: 80px; height: 80px; border-radius: 15px; margin-bottom: 10px; object-fit: cover; }
         .view-btn { display: inline-block; background: #2563eb; color: #fff; padding: 10px 20px; border-radius: 10px; text-decoration: none; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
@@ -41,17 +42,25 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // Apni Supabase Keys yahan daalein
-    const SUPABASE_URL = "YOUR_SUPABASE_URL";
-    const SUPABASE_KEY = "YOUR_SUPABASE_ANON_KEY";
+    // 1. Apni URL aur Key yahan daalein
+    const SUPABASE_URL = "https://ralinunegsbuvlhwpzln.supabase.co"; // Apna Project URL
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE"; // Apni Nayi Key Yahan Paste Karein
+    
     const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function loadApps() {
         const container = document.getElementById('apps-container');
-        let { data: apps, error } = await supabase.from('apps').select('*');
+        
+        // Supabase se data fetch karein
+        const { data: apps, error } = await supabase.from('apps').select('*');
 
         if (error) {
-            container.innerHTML = `<p>Error: ${error.message}</p>`;
+            container.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+            return;
+        }
+
+        if (!apps || apps.length === 0) {
+            container.innerHTML = `<p>Koi apps nahi mile.</p>`;
             return;
         }
 
