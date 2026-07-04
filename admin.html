@@ -54,10 +54,19 @@ const GEMINI_API_KEY = "AQ.Ab8RN6Lqh-jHWT70mhCrWH8EIatdwjr0ZMtwHwQUnZxzp2cpuA";
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 function verifyAdmin() {
-    if(document.getElementById("secretKeyInput").value === "kss@1#HAFSA") {
+    const enteredKey = document.getElementById("secretKeyInput").value.trim();
+    const correctKey = "kss@1#HAFSA";
+
+    console.log("Entered:", enteredKey); // यह देखने के लिए कि आप क्या डाल रहे हैं
+    console.log("Correct:", correctKey);
+
+    if(enteredKey === correctKey) {
         document.getElementById("login-box").classList.add("hidden");
         document.getElementById("upload-panel").classList.remove("hidden");
-    } else { alert("Wrong Password!"); }
+        console.log("Login Success!");
+    } else {
+        alert("❌ Invalid Key!Invalid Password .");
+    }
 }
 
 async function generateAI() {
