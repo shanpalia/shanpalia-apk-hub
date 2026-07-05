@@ -28,7 +28,6 @@
         <button onclick="showTab('manage')">Manage Apps</button>
     </div>
 
-    <!-- Add App Tab -->
     <div id="tab-add">
         <h3>Upload New App</h3>
         <input type="text" id="appName" placeholder="App Name">
@@ -38,7 +37,6 @@
         <button class="btn add-btn" onclick="saveApp()">Publish App</button>
     </div>
 
-    <!-- Manage App Tab -->
     <div id="tab-manage" class="hidden">
         <h3>Manage Apps</h3>
         <div id="apps-list">Loading...</div>
@@ -47,7 +45,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    const supabase = supabase.createClient("https://ralinnuegsbuvlhwpzln.supabase.co", "sb_publishable_pXsTbFOseqm5uuA0hzqSzQ_UJxdvQi9");
+    // Supabase Client Initialized correctly
+    const supabase = window.supabase.createClient("https://ralinnuegsbuvlhwpzln.supabase.co", "sb_publishable_pXsTbFOseqm5uuA0hzqSzQ_UJxdvQi9");
 
     function check() {
         if(document.getElementById("pass").value === "kss@1#HAFSA") {
