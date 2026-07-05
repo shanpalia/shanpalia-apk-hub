@@ -2,48 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ShanPalia Admin</title>
+    <title>ShanPalia Pro Admin</title>
     <style>
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 350px; margin: 20px auto; }
+        body { font-family: sans-serif; padding: 20px; background: #f4f7f6; }
+        .card { background: white; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        .btn { padding: 10px 15px; cursor: pointer; border: none; border-radius: 5px; color: white; }
+        .tab-btn { background: #333; }
+        .add-btn { background: #2563eb; }
+        .delete-btn { background: #dc2626; }
         .hidden { display: none; }
-        input, textarea { width: 100%; padding: 8px; margin: 5px 0; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; cursor: pointer; background: #2563eb; color: white; border: none; border-radius: 5px; }
     </style>
 </head>
 <body>
 
-<!-- Login Box -->
-<div id="login-box" class="card">
-    <input type="password" id="pass" placeholder="Password">
-    <button onclick="check()">Login</button>
+<div class="card">
+    <button class="tab-btn" onclick="showTab('add')">Add App</button>
+    <button class="tab-btn" onclick="showTab('manage')">Manage Apps</button>
+
+    <!-- ADD TAB -->
+    <div id="add-tab">
+        <h2>Upload New App</h2>
+        <input type="text" id="name" placeholder="App Name">
+        <button onclick="generateAI()">✨ AI Generate Description</button>
+        <textarea id="desc" rows="3" placeholder="Description"></textarea>
+        <input type="file" id="iconFile" accept="image/*">
+        <input type="file" id="screenshotFiles" multiple accept="image/*">
+        <input type="text" id="apkUrl" placeholder="APK URL">
+        <button class="add-btn" onclick="saveApp()">Publish App</button>
+    </div>
+
+    <!-- MANAGE TAB -->
+    <div id="manage-tab" class="hidden">
+        <h2>Manage Apps</h2>
+        <div id="apps-list">Loading...</div>
+    </div>
 </div>
 
-<!-- Upload Panel (लॉगिन के बाद यही दिखेगा) -->
-<div id="upload-panel" class="card hidden">
-    <h2>Upload App</h2>
-    <input type="text" id="appName" placeholder="App Name">
-    <textarea id="appDescription" placeholder="Description"></textarea>
-    <input type="text" id="appIcon" placeholder="Icon URL">
-    <input type="text" id="appApk" placeholder="APK Link">
-    <button onclick="uploadApp()">Publish</button>
-    <p id="status-msg"></p>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    function check() {
-        if(document.getElementById("pass").value === "kss@1#HAFSA") {
-            document.getElementById("login-box").style.display = "none";
-            document.getElementById("upload-panel").style.display = "block";
-        } else {
-            alert("Wrong Password!");
-        }
+    const supabase = supabase.createClient("YOUR_SUPABASE_URL", "YOUR_SUPABASE_KEY");
+
+    function showTab(tab) {
+        document.getElementById('add-tab').classList.toggle('hidden', tab !== 'add');
+        document.getElementById('manage-tab').classList.toggle('hidden', tab !== 'manage');
+        if(tab === 'manage') loadApps();
     }
 
-    function uploadApp() {
-        document.getElementById("status-msg").innerText = "Uploading...";
-        // यहाँ अपना Supabase वाला लॉजिक दोबारा डाल सकते हैं
-        alert("Upload logic yahan trigger hoga!");
+    async function loadApps() {
+        const { data } = await supabase.from('apps').select('*');
+        const list = document.getElementById('apps-list');
+        list.innerHTML = data.map(app => `
+            <div style="border-bottom:1px solid #ccc; padding:10px;">
+                <strong>${app.name}</strong> 
+                <button class="delete-btn" onclick="deleteApp('${app.id}')">Delete</button>
+            </div>
+        `).join('');
     }
+
+    async function deleteApp(id) {
+        await supabase.from('apps').delete().eq('id', id);
+        loadApps();
+    }
+    
+    // यहाँ अपनी generateAI और saveApp की लॉजिक पहले वाली ही रहेगी
 </script>
 </body>
 </html>
