@@ -2,39 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ShanPalia Pro Admin</title>
+    <title>ShanPalia Admin Panel</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f7f6; }
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
         .card { background: white; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
-        .btn { padding: 10px 15px; cursor: pointer; border: none; border-radius: 5px; color: white; }
-        .tab-btn { background: #333; }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .btn { padding: 10px 15px; cursor: pointer; border: none; border-radius: 5px; color: white; width: 100%; margin-top: 10px; }
         .add-btn { background: #2563eb; }
-        .delete-btn { background: #dc2626; }
+        .del-btn { background: #dc2626; margin-top: 5px; }
         .hidden { display: none; }
+        .tab-nav { display: flex; gap: 10px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <button class="tab-btn" onclick="showTab('add')">Add App</button>
-    <button class="tab-btn" onclick="showTab('manage')">Manage Apps</button>
+<!-- Login Section -->
+<div id="login-box" class="card">
+    <h2>Admin Login</h2>
+    <input type="password" id="pass" placeholder="Password">
+    <button class="btn add-btn" onclick="check()">Login</button>
+</div>
 
-    <!-- ADD TAB -->
-    <div id="add-tab">
-        <h2>Upload New App</h2>
-        <input type="text" id="name" placeholder="App Name">
-        <button onclick="generateAI()">✨ AI Generate Description</button>
-        <textarea id="desc" rows="3" placeholder="Description"></textarea>
-        <input type="file" id="iconFile" accept="image/*">
-        <input type="file" id="screenshotFiles" multiple accept="image/*">
-        <input type="text" id="apkUrl" placeholder="APK URL">
-        <button class="add-btn" onclick="saveApp()">Publish App</button>
+<!-- Main Dashboard -->
+<div id="admin-panel" class="card hidden">
+    <div class="tab-nav">
+        <button onclick="showTab('add')">Add App</button>
+        <button onclick="showTab('manage')">Manage Apps</button>
     </div>
 
-    <!-- MANAGE TAB -->
-    <div id="manage-tab" class="hidden">
-        <h2>Manage Apps</h2>
+    <!-- Add App Tab -->
+    <div id="tab-add">
+        <h3>Upload New App</h3>
+        <input type="text" id="appName" placeholder="App Name">
+        <button onclick="generateAI()">✨ AI Generate Description</button>
+        <textarea id="appDesc" rows="3" placeholder="Description"></textarea>
+        <input type="text" id="appIcon" placeholder="Icon URL">
+        <input type="text" id="appApk" placeholder="APK Link">
+        <input type="file" id="appScreenshots" multiple>
+        <button class="btn add-btn" onclick="saveApp()">Publish App</button>
+    </div>
+
+    <!-- Manage App Tab -->
+    <div id="tab-manage" class="hidden">
+        <h3>Manage Apps</h3>
         <div id="apps-list">Loading...</div>
     </div>
 </div>
@@ -43,19 +53,25 @@
 <script>
     const supabase = supabase.createClient("YOUR_SUPABASE_URL", "YOUR_SUPABASE_KEY");
 
-    function showTab(tab) {
-        document.getElementById('add-tab').classList.toggle('hidden', tab !== 'add');
-        document.getElementById('manage-tab').classList.toggle('hidden', tab !== 'manage');
-        if(tab === 'manage') loadApps();
+    function check() {
+        if(document.getElementById("pass").value === "kss@1#HAFSA") {
+            document.getElementById("login-box").style.display = "none";
+            document.getElementById("admin-panel").classList.remove("hidden");
+        } else { alert("Wrong Password!"); }
+    }
+
+    function showTab(t) {
+        document.getElementById('tab-add').classList.toggle('hidden', t !== 'add');
+        document.getElementById('tab-manage').classList.toggle('hidden', t !== 'manage');
+        if(t === 'manage') loadApps();
     }
 
     async function loadApps() {
         const { data } = await supabase.from('apps').select('*');
-        const list = document.getElementById('apps-list');
-        list.innerHTML = data.map(app => `
+        document.getElementById('apps-list').innerHTML = data.map(app => `
             <div style="border-bottom:1px solid #ccc; padding:10px;">
-                <strong>${app.name}</strong> 
-                <button class="delete-btn" onclick="deleteApp('${app.id}')">Delete</button>
+                <strong>${app.name}</strong>
+                <button class="btn del-btn" onclick="deleteApp('${app.id}')">Delete</button>
             </div>
         `).join('');
     }
@@ -64,8 +80,26 @@
         await supabase.from('apps').delete().eq('id', id);
         loadApps();
     }
-    
-    // यहाँ अपनी generateAI और saveApp की लॉजिक पहले वाली ही रहेगी
+
+    async function saveApp() {
+        const { error } = await supabase.from('apps').insert([{
+            name: document.getElementById('appName').value,
+            description: document.getElementById('appDesc').value,
+            icon: document.getElementById('appIcon').value,
+            apk: document.getElementById('appApk').value
+        }]);
+        if(!error) alert("App Uploaded!");
+    }
+
+    async function generateAI() {
+        const name = document.getElementById('appName').value;
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_GEMINI_KEY`, {
+            method: 'POST',
+            body: JSON.stringify({ contents: [{ parts: [{ text: "Write short description for " + name }] }] })
+        });
+        const data = await res.json();
+        document.getElementById('appDesc').value = data.candidates[0].content.parts[0].text;
+    }
 </script>
 </body>
 </html>
