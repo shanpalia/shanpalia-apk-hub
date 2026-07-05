@@ -2,38 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Panel</title>
+    <title>ShanPalia Admin</title>
     <style>
-        .admin-card { background: white; padding: 25px; border-radius: 15px; width: 300px; margin: 50px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        /* क्लास को .hidden के बजाय सीधा 'display: none' रखेंगे */
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 350px; margin: 20px auto; }
+        .hidden { display: none; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; cursor: pointer; background: #2563eb; color: white; border: none; border-radius: 5px; }
     </style>
 </head>
 <body>
 
-<div id="login-box" class="admin-card">
-    <h2>Admin Login</h2>
+<!-- Login Box -->
+<div id="login-box" class="card">
     <input type="password" id="pass" placeholder="Password">
     <button onclick="check()">Login</button>
 </div>
 
-<!-- यहाँ style="display:none" पक्का लगायें -->
-<div id="upload-panel" class="admin-card" style="display:none;">
-    <h2>Upload Panel</h2>
-    <p>Success! You are logged in.</p>
+<!-- Upload Panel (लॉगिन के बाद यही दिखेगा) -->
+<div id="upload-panel" class="card hidden">
+    <h2>Upload App</h2>
+    <input type="text" id="appName" placeholder="App Name">
+    <textarea id="appDescription" placeholder="Description"></textarea>
+    <input type="text" id="appIcon" placeholder="Icon URL">
+    <input type="text" id="appApk" placeholder="APK Link">
+    <button onclick="uploadApp()">Publish</button>
+    <p id="status-msg"></p>
 </div>
 
 <script>
     function check() {
-        var p = document.getElementById("pass").value;
-        if(p === "kss@1#HAFSA") {
-            // लॉगिन बॉक्स को गायब करें
+        if(document.getElementById("pass").value === "kss@1#HAFSA") {
             document.getElementById("login-box").style.display = "none";
-            // अपलोड पैनल को दिखाएं
             document.getElementById("upload-panel").style.display = "block";
-            console.log("Panel should be visible now");
         } else {
-            alert("Galat Password!");
+            alert("Wrong Password!");
         }
+    }
+
+    function uploadApp() {
+        document.getElementById("status-msg").innerText = "Uploading...";
+        // यहाँ अपना Supabase वाला लॉजिक दोबारा डाल सकते हैं
+        alert("Upload logic yahan trigger hoga!");
     }
 </script>
 </body>
