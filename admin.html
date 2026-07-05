@@ -1,40 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Manual App Manager</title>
+    <meta charset="UTF-8">
+    <title>ShanPalia Admin Panel</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        .card { max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; }
-        input, textarea { width: 100%; margin: 10px 0; padding: 8px; }
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 10px; max-width: 500px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .btn { padding: 10px; cursor: pointer; border: none; border-radius: 5px; color: white; width: 100%; background: #2563eb; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h3>App Details</h3>
-        <input type="text" id="name" placeholder="App Name">
-        <input type="text" id="icon" placeholder="Icon URL">
-        <input type="text" id="apk" placeholder="MediaFire Link">
-        <textarea id="desc" placeholder="Description"></textarea>
-        <button onclick="generateCode()">Generate Code</button>
-        <hr>
-        <textarea id="output" rows="6" placeholder="Copy this code..."></textarea>
-    </div>
 
-    <script>
-        function generateCode() {
-            const name = document.getElementById('name').value;
-            const icon = document.getElementById('icon').value;
-            const apk = document.getElementById('apk').value;
-            const desc = document.getElementById('desc').value;
+<div class="card">
+    <h3>Add New App</h3>
+    <input type="text" id="appName" placeholder="App Name">
+    <textarea id="appDesc" placeholder="Description"></textarea>
+    <input type="text" id="appIcon" placeholder="Icon URL">
+    <input type="text" id="appApk" placeholder="MediaFire Link">
+    <button class="btn" onclick="saveApp()">Publish App</button>
+</div>
 
-            const code = `<div class="app-card">
-    <img src="${icon}" width="50">
-    <h3>${name}</h3>
-    <p>${desc}</p>
-    <a href="${apk}">Download APK</a>
-</div>`;
-            document.getElementById('output').value = code;
-        }
-    </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    const supabase = window.supabase.createClient("https://ralinnuegsbuvlhwpzln.supabase.co", "sb_publishable_pXsTbFOseqm5uuA0hzqSzQ_UJxdvQi9");
+
+    async function saveApp() {
+        const { error } = await supabase.from('apps').insert([{
+            name: document.getElementById('appName').value,
+            description: document.getElementById('appDesc').value,
+            icon: document.getElementById('appIcon').value,
+            apk: document.getElementById('appApk').value
+        }]);
+
+        if(error) { alert("Error: " + error.message); } 
+        else { alert("App Published Successfully! Check your homepage."); }
+    }
+</script>
 </body>
 </html>
