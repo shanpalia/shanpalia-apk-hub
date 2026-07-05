@@ -16,14 +16,12 @@
 </head>
 <body>
 
-<!-- Login Section -->
 <div id="login-box" class="card">
     <h2>Admin Login</h2>
     <input type="password" id="pass" placeholder="Password">
     <button class="btn add-btn" onclick="check()">Login</button>
 </div>
 
-<!-- Main Dashboard -->
 <div id="admin-panel" class="card hidden">
     <div class="tab-nav">
         <button onclick="showTab('add')">Add App</button>
@@ -34,8 +32,7 @@
     <div id="tab-add">
         <h3>Upload New App</h3>
         <input type="text" id="appName" placeholder="App Name">
-        <button onclick="generateAI()">✨ AI Generate Description</button>
-        <textarea id="appDesc" rows="3" placeholder="Description"></textarea>
+        <textarea id="appDesc" rows="4" placeholder="Description (Write manually here)"></textarea>
         <input type="text" id="appIcon" placeholder="Icon URL">
         <input type="text" id="appApk" placeholder="APK Link">
         <button class="btn add-btn" onclick="saveApp()">Publish App</button>
@@ -50,8 +47,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // 1. Apni Keys yahan dalen
-    const supabase = supabase.createClient("YOUR_SUPABASE_URL", "YOUR_SUPABASE_KEY");
+    const supabase = supabase.createClient("https://ralinnuegsbuvlhwpzln.supabase.co", "sb_publishable_pXsTbFOseqm5uuA0hzqSzQ_UJxdvQi9");
 
     function check() {
         if(document.getElementById("pass").value === "kss@1#HAFSA") {
@@ -79,8 +75,10 @@
     }
 
     async function deleteApp(id) {
-        await supabase.from('apps').delete().eq('id', id);
-        loadApps();
+        if(confirm("Are you sure?")) {
+            await supabase.from('apps').delete().eq('id', id);
+            loadApps();
+        }
     }
 
     async function saveApp() {
@@ -90,18 +88,8 @@
             icon: document.getElementById('appIcon').value,
             apk: document.getElementById('appApk').value
         }]);
-        if(!error) alert("App Uploaded!");
-    }
-
-    async function generateAI() {
-        const name = document.getElementById('appName').value;
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_GEMINI_KEY`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ contents: [{ parts: [{ text: "Write short description for " + name }] }] })
-        });
-        const data = await res.json();
-        document.getElementById('appDesc').value = data.candidates[0].content.parts[0].text;
+        if(error) { alert("Error: " + error.message); } 
+        else { alert("App Uploaded Successfully!"); }
     }
 </script>
 </body>
