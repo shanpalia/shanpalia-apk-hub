@@ -2,122 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShanPalia Admin Panel</title>
     <style>
-        body { background: #f1f5f9; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
-        .admin-card { background: white; width: 100%; max-width: 500px; padding: 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 15px; }
-        input, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn { background: #2563eb; color: white; border: none; width: 100%; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        body { font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f1f5f9; }
+        .box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 300px; text-align: center; }
         .hidden { display: none; }
+        input { width: 90%; padding: 10px; margin-bottom: 10px; }
+        button { padding: 10px 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div id="login-box" class="admin-card">
-    <h2>Admin Login 🔒</h2>
-    <input type="password" id="secretKeyInput" placeholder="Password...">
-    <button class="btn" style="margin-top:10px;" onclick="verifyAdmin()">Login</button>
+<div id="login-box" class="box">
+    <h2>Login</h2>
+    <input type="password" id="pass" placeholder="Password">
+    <button onclick="check()">Login</button>
 </div>
 
-<div id="upload-panel" class="admin-card hidden">
-    <h2>Upload New App 🚀</h2>
-    <div class="form-group">
-        <label>App Name</label>
-        <input type="text" id="appName">
-    </div>
-    <div class="form-group">
-        <label>Description</label>
-        <button type="button" onclick="generateAI()" style="background:#8b5cf6; color:white; border:none; padding:5px; border-radius:3px; cursor:pointer;">✨ AI Generate</button>
-        <textarea id="appDescription" rows="3"></textarea>
-    </div>
-    <div class="form-group">
-        <label>Screenshots</label>
-        <input type="file" id="screenshots" multiple accept="image/*">
-    </div>
-    <input type="text" id="appIcon" placeholder="Icon URL">
-    <input type="text" id="appApk" placeholder="MediaFire Link">
-    <button class="btn" style="margin-top:15px;" id="submitBtn" onclick="uploadApp()">Publish Live</button>
-    <p id="status-msg"></p>
+<div id="upload-panel" class="box hidden">
+    <h2>Upload Panel</h2>
+    <p>Login Successful!</p>
 </div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // 1. CONFIGURATION (यहाँ अपनी सही Key डालें)
-    const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_pXsTbFOseqm5uuA0hzqSzQ_UJxdvQi9"; // यहाँ अपनी sb_ से शुरू होने वाली की डालें
-    const GEMINI_API_KEY = "NO_KEY"; // यहाँ AI Studio वाली AIza की डालें
-
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    // 2. LOGIN LOGIC
-    function verifyAdmin() {
-        const password = document.getElementById("secretKeyInput").value;
-        if(password === "kss@1#HAFSA") {
-            document.getElementById("login-box").classList.add("hidden");
-            document.getElementById("upload-panel").classList.remove("hidden");
-        } else { 
-            alert("Wrong Password!"); 
+    function check() {
+        var p = document.getElementById("pass").value;
+        console.log("Password entered:", p); // F12 दबाकर Console में देखें
+        if(p === "kss@1#HAFSA") {
+            document.getElementById("login-box").style.display = "none";
+            document.getElementById("upload-panel").style.display = "block";
+            alert("Login ho gaya!");
+        } else {
+            alert("Galat Password!");
         }
-    }
-
-    // 3. AI GENERATION
-    async function generateAI() {
-        const name = document.getElementById("appName").value;
-        if(!name) return alert("Pehle App Name likhein!");
-        const desc = document.getElementById("appDescription");
-        desc.value = "Generating...";
-        
-        try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ contents: [{ parts: [{ text: "Write a short app description for " + name }] }] })
-            });
-            const data = await res.json();
-            desc.value = data.candidates[0].content.parts[0].text;
-        } catch(e) { 
-            desc.value = "Error generating description. Check your AI API Key."; 
-        }
-    }
-
-    // 4. UPLOAD LOGIC
-    async function uploadApp() {
-        const btn = document.getElementById("submitBtn");
-        const msg = document.getElementById("status-msg");
-        const files = document.getElementById("screenshots").files;
-        let screenshotUrls = [];
-
-        btn.disabled = true;
-        msg.innerText = "Uploading...";
-
-        try {
-            for(let file of files) {
-                const path = Date.now() + "_" + file.name;
-                const { data, error } = await supabase.storage.from('screenshots').upload(path, file);
-                if(error) throw error;
-                
-                const res = supabase.storage.from('screenshots').getPublicUrl(path);
-                screenshotUrls.push(res.data.publicUrl);
-            }
-
-            const { error } = await supabase.from('apps').insert([{
-                name: document.getElementById("appName").value,
-                description: document.getElementById("appDescription").value,
-                icon: document.getElementById("appIcon").value,
-                apk: document.getElementById("appApk").value,
-                screenshots: screenshotUrls.join(",")
-            }]);
-
-            if(error) throw error;
-            msg.innerText = "🎉 Uploaded Successfully!";
-        } catch(e) { 
-            msg.innerText = "Error: " + e.message; 
-        }
-        btn.disabled = false;
     }
 </script>
+
 </body>
 </html>
