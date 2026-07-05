@@ -1,95 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>ShanPalia Admin Panel</title>
+    <title>Manual App Manager</title>
     <style>
-        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        .btn { padding: 10px 15px; cursor: pointer; border: none; border-radius: 5px; color: white; width: 100%; margin-top: 10px; }
-        .add-btn { background: #2563eb; }
-        .del-btn { background: #dc2626; margin-top: 5px; }
-        .hidden { display: none; }
-        .tab-nav { display: flex; gap: 10px; margin-bottom: 20px; }
+        body { font-family: sans-serif; padding: 20px; }
+        .card { max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; }
+        input, textarea { width: 100%; margin: 10px 0; padding: 8px; }
     </style>
 </head>
 <body>
-
-<div id="login-box" class="card">
-    <h2>Admin Login</h2>
-    <input type="password" id="pass" placeholder="Password">
-    <button class="btn add-btn" onclick="check()">Login</button>
-</div>
-
-<div id="admin-panel" class="card hidden">
-    <div class="tab-nav">
-        <button onclick="showTab('add')">Add App</button>
-        <button onclick="showTab('manage')">Manage Apps</button>
+    <div class="card">
+        <h3>App Details</h3>
+        <input type="text" id="name" placeholder="App Name">
+        <input type="text" id="icon" placeholder="Icon URL">
+        <input type="text" id="apk" placeholder="MediaFire Link">
+        <textarea id="desc" placeholder="Description"></textarea>
+        <button onclick="generateCode()">Generate Code</button>
+        <hr>
+        <textarea id="output" rows="6" placeholder="Copy this code..."></textarea>
     </div>
 
-    <div id="tab-add">
-        <h3>Upload New App</h3>
-        <input type="text" id="appName" placeholder="App Name">
-        <textarea id="appDesc" rows="4" placeholder="Description (Write manually here)"></textarea>
-        <input type="text" id="appIcon" placeholder="Icon URL">
-        <input type="text" id="appApk" placeholder="APK Link">
-        <button class="btn add-btn" onclick="saveApp()">Publish App</button>
-    </div>
+    <script>
+        function generateCode() {
+            const name = document.getElementById('name').value;
+            const icon = document.getElementById('icon').value;
+            const apk = document.getElementById('apk').value;
+            const desc = document.getElementById('desc').value;
 
-    <div id="tab-manage" class="hidden">
-        <h3>Manage Apps</h3>
-        <div id="apps-list">Loading...</div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    // Supabase Client Initialized correctly
-    const supabase = window.supabase.createClient("https://ralinnuegsbuvlhwpzln.supabase.co", "sb_publishable_pXsTbFOseqm5uuA0hzqSzQ_UJxdvQi9");
-
-    function check() {
-        if(document.getElementById("pass").value === "kss@1#HAFSA") {
-            document.getElementById("login-box").style.display = "none";
-            document.getElementById("admin-panel").classList.remove("hidden");
-        } else { alert("Wrong Password!"); }
-    }
-
-    function showTab(t) {
-        document.getElementById('tab-add').classList.toggle('hidden', t !== 'add');
-        document.getElementById('tab-manage').classList.toggle('hidden', t !== 'manage');
-        if(t === 'manage') loadApps();
-    }
-
-    async function loadApps() {
-        const { data } = await supabase.from('apps').select('*');
-        if (data) {
-            document.getElementById('apps-list').innerHTML = data.map(app => `
-                <div style="border-bottom:1px solid #ccc; padding:10px;">
-                    <strong>${app.name}</strong>
-                    <button class="btn del-btn" onclick="deleteApp('${app.id}')">Delete</button>
-                </div>
-            `).join('');
+            const code = `<div class="app-card">
+    <img src="${icon}" width="50">
+    <h3>${name}</h3>
+    <p>${desc}</p>
+    <a href="${apk}">Download APK</a>
+</div>`;
+            document.getElementById('output').value = code;
         }
-    }
-
-    async function deleteApp(id) {
-        if(confirm("Are you sure?")) {
-            await supabase.from('apps').delete().eq('id', id);
-            loadApps();
-        }
-    }
-
-    async function saveApp() {
-        const { error } = await supabase.from('apps').insert([{
-            name: document.getElementById('appName').value,
-            description: document.getElementById('appDesc').value,
-            icon: document.getElementById('appIcon').value,
-            apk: document.getElementById('appApk').value
-        }]);
-        if(error) { alert("Error: " + error.message); } 
-        else { alert("App Uploaded Successfully!"); }
-    }
-</script>
+    </script>
 </body>
 </html>
