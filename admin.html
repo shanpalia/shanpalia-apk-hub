@@ -4,59 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShanPalia Admin Panel</title>
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
         .card { background: white; padding: 25px; border-radius: 12px; max-width: 600px; margin: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h2, h3 { color: #1e293b; text-align: center; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; outline: none; }
-        input:focus { border-color: #2563eb; }
-        .btn { padding: 12px; cursor: pointer; border: none; border-radius: 8px; color: white; width: 100%; font-weight: bold; transition: 0.3s; margin-top: 10px; }
-        .add-btn { background: #2563eb; }
-        .add-btn:hover { background: #1d4ed8; }
-        .del-btn { background: #dc2626; padding: 5px 10px; width: auto; }
         .hidden { display: none; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: #e2e8f0; cursor: pointer; border-radius: 8px; font-weight: bold; }
-        .tab-btn.active { background: #2563eb; color: white; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
+        .btn { padding: 12px; cursor: pointer; border: none; border-radius: 8px; color: white; width: 100%; font-weight: bold; }
+        .add-btn { background: #2563eb; }
     </style>
 </head>
 <body>
 
-<!-- Login Section -->
 <div id="login-box" class="card">
     <h2>🔐 Admin Login</h2>
     <input type="password" id="pass" placeholder="Enter Admin Password">
-    <button class="btn add-btn" onclick="check()">Login Securely</button>
+    <button class="btn add-btn" onclick="check()">Login</button>
 </div>
 
-<!-- Main Panel -->
 <div id="admin-panel" class="card hidden">
     <h2>⚙️ Admin Dashboard</h2>
-    <div class="tabs">
-        <button class="tab-btn active" id="tab1" onclick="showSection('add')">Add New App</button>
-        <button class="tab-btn" id="tab2" onclick="showSection('manage')">Manage Apps</button>
-    </div>
-
-    <!-- Add Section -->
-    <div id="add-sec">
-        <input type="text" id="appName" placeholder="App Name">
-        <input type="text" id="appVer" placeholder="Version (e.g. 1.0.1)">
-        <input type="text" id="appDev" placeholder="Developer Name">
-        <input type="text" id="appIcon" placeholder="Icon URL">
-        <input type="text" id="appApk" placeholder="MediaFire Link">
-        <textarea id="appSS" placeholder="Screenshots URL (Comma separated)"></textarea>
-        <button class="btn add-btn" onclick="saveApp()">Publish App to Website</button>
-    </div>
-
-    <!-- Manage Section -->
-    <div id="manage-sec" class="hidden">
-        <div id="apps-list">Loading apps...</div>
-    </div>
+    <input type="text" id="appName" placeholder="App Name">
+    <input type="text" id="appVer" placeholder="Version">
+    <input type="text" id="appDev" placeholder="Developer Name">
+    <input type="text" id="appIcon" placeholder="Icon URL">
+    <input type="text" id="appApk" placeholder="MediaFire Link">
+    <button class="btn add-btn" onclick="saveApp()">Publish App</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    const supabase = window.supabase.createClient("https://ralinnuegsbuvlhwpzln.supabase.co", "sb_publishable_pXsTbFOseqm5uuA0hzqSzQ_UJxdvQi9");
+    // Supabase Initialization
+    const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE";
+    
+    // Check if supabase exists before creating client
+    const supabase = (window.supabase) ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
     function check() {
         if(document.getElementById("pass").value === "kss@1#HAFSA") {
@@ -65,42 +48,19 @@
         } else { alert("Wrong Password!"); }
     }
 
-    function showSection(s) {
-        document.getElementById('add-sec').classList.toggle('hidden', s !== 'add');
-        document.getElementById('manage-sec').classList.toggle('hidden', s !== 'manage');
-        document.getElementById('tab1').classList.toggle('active', s === 'add');
-        document.getElementById('tab2').classList.toggle('active', s === 'manage');
-        if(s === 'manage') loadApps();
-    }
-
     async function saveApp() {
+        if (!supabase) { alert("Supabase not loaded!"); return; }
+        
         const { error } = await supabase.from('apps').insert([{
             name: document.getElementById('appName').value,
             version: document.getElementById('appVer').value,
             developer: document.getElementById('appDev').value,
             icon: document.getElementById('appIcon').value,
-            apk: document.getElementById('appApk').value,
-            screenshots: document.getElementById('appSS').value
+            apk: document.getElementById('appApk').value
         }]);
+        
         if(error) alert("Error: " + error.message); 
-        else { alert("Success! App is now live."); location.reload(); }
-    }
-
-    async function loadApps() {
-        const { data } = await supabase.from('apps').select('*');
-        document.getElementById('apps-list').innerHTML = data.map(app => `
-            <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
-                <span>${app.name}</span>
-                <button class="btn del-btn" onclick="deleteApp('${app.id}')">Delete</button>
-            </div>
-        `).join('');
-    }
-
-    async function deleteApp(id) {
-        if(confirm("Delete this app?")) {
-            await supabase.from('apps').delete().eq('id', id);
-            loadApps();
-        }
+        else alert("App Published Successfully!");
     }
 </script>
 </body>
