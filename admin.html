@@ -3,41 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Panel</title>
-    <style>
-        .admin-card { background: white; padding: 25px; border-radius: 15px; width: 300px; margin: 50px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .hidden { display: none; }
-        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; cursor: pointer; }
-    </style>
 </head>
 <body>
 
-<div id="login-box" class="admin-card">
-    <h2>Admin Login</h2>
-    <input type="password" id="secretKeyInput" placeholder="Password">
-    <button onclick="verifyAdmin()">Login</button>
+<div id="login-box">
+    <h2>Login</h2>
+    <input type="password" id="pass" placeholder="Password">
+    <button onclick="runLogin()">Login</button>
 </div>
 
-<div id="upload-panel" class="admin-card hidden">
+<div id="upload-panel" style="display:none;">
     <h2>Upload Panel</h2>
-    <p>Logged In!</p>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // Supabase Setup
-    const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_pXsTbFOseqm5uuA0hzqSzQ_UJxdvQi9"; 
-    
-    // सिर्फ एक बार इनिशियलाइज़ करें
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    // Login Function
-    function verifyAdmin() {
-        const pass = document.getElementById("secretKeyInput").value;
-        if(pass === "kss@1#HAFSA") {
-            document.getElementById("login-box").classList.add("hidden");
-            document.getElementById("upload-panel").classList.remove("hidden");
+    function runLogin() {
+        console.log("Login button clicked!");
+        var password = document.getElementById("pass").value;
+        if(password === "kss@1#HAFSA") {
+            document.getElementById("login-box").style.display = "none";
+            document.getElementById("upload-panel").style.display = "block";
+            alert("Success!");
         } else {
             alert("Wrong Password!");
         }
