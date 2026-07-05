@@ -45,19 +45,22 @@
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // 1. CONFIGURATION
+    // 1. CONFIGURATION (यहाँ अपनी सही Key डालें)
     const SUPABASE_URL = "https://ralinnuegsbuvlhwpzln.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhbGlubnVlZ3NidXZsaHdwemxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU2NDIsImV4cCI6MjA5NTg3MTY0Mn0.hIec6UxRx5gzSMTi5oJ3_xXw3d1QKCmKsPF-stBwIFE"; 
-    const GEMINI_API_KEY = "AQ.Ab8RN6JVTyE62jZ4rRYh3P-b8RK9MyFVA-stfptsYYTWZ0qfTQ"; 
+    const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE"; // यहाँ अपनी sb_ से शुरू होने वाली की डालें
+    const GEMINI_API_KEY = "PASTE_YOUR_AIza_KEY_HERE"; // यहाँ AI Studio वाली AIza की डालें
 
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // 2. LOGIN LOGIC
     function verifyAdmin() {
-        if(document.getElementById("secretKeyInput").value === "kss@1#HAFSA") {
+        const password = document.getElementById("secretKeyInput").value;
+        if(password === "kss@1#HAFSA") {
             document.getElementById("login-box").classList.add("hidden");
             document.getElementById("upload-panel").classList.remove("hidden");
-        } else { alert("Wrong Password!"); }
+        } else { 
+            alert("Wrong Password!"); 
+        }
     }
 
     // 3. AI GENERATION
@@ -75,7 +78,9 @@
             });
             const data = await res.json();
             desc.value = data.candidates[0].content.parts[0].text;
-        } catch(e) { desc.value = "Error generating description."; }
+        } catch(e) { 
+            desc.value = "Error generating description. Check your AI API Key."; 
+        }
     }
 
     // 4. UPLOAD LOGIC
@@ -88,25 +93,29 @@
         btn.disabled = true;
         msg.innerText = "Uploading...";
 
-        for(let file of files) {
-            const path = Date.now() + "_" + file.name;
-            const { data } = await supabase.storage.from('screenshots').upload(path, file);
-            if(data) {
+        try {
+            for(let file of files) {
+                const path = Date.now() + "_" + file.name;
+                const { data, error } = await supabase.storage.from('screenshots').upload(path, file);
+                if(error) throw error;
+                
                 const res = supabase.storage.from('screenshots').getPublicUrl(path);
                 screenshotUrls.push(res.data.publicUrl);
             }
+
+            const { error } = await supabase.from('apps').insert([{
+                name: document.getElementById("appName").value,
+                description: document.getElementById("appDescription").value,
+                icon: document.getElementById("appIcon").value,
+                apk: document.getElementById("appApk").value,
+                screenshots: screenshotUrls.join(",")
+            }]);
+
+            if(error) throw error;
+            msg.innerText = "🎉 Uploaded Successfully!";
+        } catch(e) { 
+            msg.innerText = "Error: " + e.message; 
         }
-
-        const { error } = await supabase.from('apps').insert([{
-            name: document.getElementById("appName").value,
-            description: document.getElementById("appDescription").value,
-            icon: document.getElementById("appIcon").value,
-            apk: document.getElementById("appApk").value,
-            screenshots: screenshotUrls.join(",")
-        }]);
-
-        if(error) { msg.innerText = "Error: " + error.message; }
-        else { msg.innerText = "🎉 Uploaded Successfully!"; }
         btn.disabled = false;
     }
 </script>
